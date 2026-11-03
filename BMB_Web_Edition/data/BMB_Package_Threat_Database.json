@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "databaseName": "BMB Virus Scanner Package Threat Database",
+  "generatedAt": "2026-11-03",
+  "policy": {
+    "thirdParty": {
+      "rowColor": "#8B0000",
+      "action": "SPECIAL_KEYWORD_SCAN",
+      "autoRemove": false,
+      "note": "Package-name advisory alone is not sufficient proof. Require exact high-confidence indicator or user confirmation before uninstall."
+    },
+    "overlay": {
+      "rowColor": "#FFD700",
+      "action": "OVERLAY_SEARCH",
+      "autoRemove": false,
+      "note": "Display allowed overlay apps and allowlist separately. Overlay permission alone is not malware."
+    },
+    "malwareTrojan": {
+      "rowColor": "#4B2416",
+      "action": "MALWARE_TROJAN_SCAN",
+      "autoRemove": false,
+      "note": "Require corroborating evidence or user confirmation before uninstall."
+    }
+  },
+  "allowlist": [],
+  "packages": [
+    {
+      "packageName": "com.shahdi.siri2",
+      "appName": "Siri Voice Assistant Android",
+      "category": "THIRDPARTY_ADWARE_ADVISORY",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Package name reported in an adware campaign; package-only match is advisory, not proof every version is malicious."
+    },
+    {
+      "packageName": "com.shahdi.siri1",
+      "appName": "Siri for Android",
+      "category": "THIRDPARTY_ADWARE_ADVISORY",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Package name reported in an adware campaign; package-only match is advisory, not proof every version is malicious."
+    },
+    {
+      "packageName": "com.keli.siriapp1",
+      "appName": "Siri for Android",
+      "category": "THIRDPARTY_ADWARE_ADVISORY",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Package name reported in an adware campaign; package-only match is advisory, not proof every version is malicious."
+    },
+    {
+      "packageName": "com.shahdi.imessage2",
+      "appName": "iMessage Android App",
+      "category": "THIRDPARTY_ADWARE_ADVISORY",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Package name reported in an adware campaign; package-only match is advisory, not proof every version is malicious."
+    },
+    {
+      "packageName": "com.keli.imessage3",
+      "appName": "iMessage for Android",
+      "category": "THIRDPARTY_ADWARE_ADVISORY",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Package name reported in an adware campaign; package-only match is advisory, not proof every version is malicious."
+    },
+    {
+      "packageName": "com.react.gta6game1",
+      "appName": "GTA VI (เกมปลอมตามรายงาน)",
+      "category": "THIRDPARTY_ADWARE_ADVISORY",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Package name reported in an adware campaign; package-only match is advisory, not proof every version is malicious."
+    },
+    {
+      "packageName": "com.paypal.wallawalled11",
+      "appName": "PayPal – Fast Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.premkumar.zelleapp5",
+      "appName": "Zelle Easy Secure Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.premkumar.zelleapp2",
+      "appName": "Zelle Faster Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.zelleapp.devnexus2",
+      "appName": "Zelle Faster Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.mhd.zelleapp2",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.nox.app.security",
+      "appName": "Nox App Security (ผู้ใช้เพิ่มในรายการ Third-party)",
+      "category": "THIRDPARTY_USER_ADDED",
+      "riskLevel": "UNVERIFIED",
+      "autoRemove": false,
+      "source": "User-provided package entry",
+      "sourceUrl": "",
+      "evidence": "เพิ่มตามคำขอให้แสดงในหมวด Package Third-party ของ SPECIAL KEYWORD SCAN; ยังไม่มีหลักฐานอิสระยืนยันว่าเป็นแอปอันตราย จึงต้องให้ผู้ใช้ตรวจสอบและยืนยันก่อนถอน"
+    }
+  ],
+  "categoryNotes": {
+    "LOAN_APP": "Do not classify all loan apps as malware. Verify the provider/app against Bank of Thailand licensed-provider records. No unverified loan package IDs are added.",
+    "SLOT_GAMBLING": "A gambling category is not itself proof of malware or illegality. Add package IDs only when independently verified.",
+    "OVERLAY": "No package IDs are pre-approved in this initial allowlist. Populate only after the device owner reviews the app.",
+    "MALWARE_TROJAN": "No generic package-name guesses are included. Use exact APK hashes/signatures and corroborating behavior for confirmed detections."
+  },
+  "references": [
+    "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+    "https://stoppopups.app/android-adware-list/",
+    "https://git.mitgai.net/lexmediaro/impossible-definitions",
+    "https://www.bot.or.th/th/license-loan.html",
+    "https://www.bot.or.th/th/financial-innovation/digital-finance/Digital-P-LoanProviders.html"
+  ]
+}
