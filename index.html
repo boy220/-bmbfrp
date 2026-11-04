@@ -1,50 +1,33 @@
 <!doctype html>
-<html lang="en">
+<html lang="th">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#07111f">
-  <meta name="description" content="BMB Virus Scanner Web Edition - browser-based file triage and package threat advisory.">
-  <title>BMB Cyber Defense — Web Edition</title>
-  <link rel="stylesheet" href="./assets/style.css">
-</head>
-<body>
-<div class="app-shell">
-  <aside class="sidebar" id="sidebar">
-    <a class="brand" href="#overview"><span class="brand-mark"><i class="icon-shield"></i></span><span><b>BMB CYBER</b><small>DEFENSE PLATFORM</small></span></a>
-    <div class="side-label">WORKSPACE</div>
-    <nav class="nav">
-      <a class="nav-link active" href="#overview"><span>▦</span> Overview</a>
-      <a class="nav-link" href="#scanner"><span>⌕</span> File Scanner</a>
-      <a class="nav-link" href="#package-check"><span>◈</span> Package Lookup</a>
-      <a class="nav-link" href="#history"><span>◷</span> Scan History</a>
-    </nav>
-    <div class="sidebar-bottom"><div class="engine-card"><span class="pulse"></span><div><b>WEB MODULE READY</b><small>Local analysis mode</small></div></div><small class="version">BMB WEB EDITION · PREVIEW 0.1</small></div>
-  </aside>
-  <main class="main-content">
-    <header class="topbar"><button class="menu-btn" id="menuBtn" aria-label="Toggle menu">☰</button><div><span class="eyebrow">SECURITY OPERATIONS CENTER</span><h1>Overview</h1></div><div class="top-status"><span class="status-dot"></span> SYSTEM READY <span class="top-divider"></span><span id="todayLabel">LOCAL SESSION</span></div></header>
-    <section class="welcome" id="overview"><div><div class="eyebrow accent">BMB VIRUS SCANNER / WEB EDITION</div><h2>Security starts with<br><em>visibility.</em></h2><p>Analyze files locally in your browser and review package-name threat advisories from the BMB database.</p><a class="primary-btn" href="#scanner">Open File Scanner <span>↗</span></a></div><div class="welcome-art"><div class="ring ring-one"></div><div class="ring ring-two"></div><div class="core-shield">⬡<span>✓</span></div><div class="orbit orbit-a">SHA-256</div><div class="orbit orbit-b">FILE ANALYSIS</div><div class="orbit orbit-c">BMB ENGINE</div></div></section>
-    <section class="metric-grid">
-      <article class="metric-card"><div class="metric-head">THREAT ADVISORIES <span class="metric-icon red">⌁</span></div><strong id="dbCount">—</strong><small>Package entries in local database</small></article>
-      <article class="metric-card"><div class="metric-head">FILES ANALYZED <span class="metric-icon cyan">⌕</span></div><strong id="filesCount">0</strong><small>This browser session</small></article>
-      <article class="metric-card"><div class="metric-head">FLAGGED INDICATORS <span class="metric-icon amber">⚑</span></div><strong id="flaggedCount">0</strong><small>Advisory signals only</small></article>
-      <article class="metric-card"><div class="metric-head">ENGINE STATUS <span class="metric-icon green">◉</span></div><strong class="status-word">READY</strong><small>Browser-based inspection</small></article>
-    </section>
-    <section class="content-grid">
-      <article class="panel scanner-panel" id="scanner"><div class="panel-heading"><div><span class="eyebrow">FILE INSPECTION</span><h3>File Scanner</h3></div><span class="pill">LOCAL ONLY</span></div>
-        <p class="muted">Choose files for basic browser-side inspection. Files are not uploaded to a server.</p>
-        <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Choose files to inspect"><div class="upload-icon">⇧</div><b>Drop files to analyze</b><span>or <u>browse your device</u></span><small>Multiple files supported · 100 MB per file recommended</small><input type="file" id="fileInput" multiple hidden></div>
-        <div class="selected-files" id="selectedFiles"><div class="empty-state">No files selected yet.</div></div>
-        <div class="scan-actions"><button class="primary-btn" id="analyzeBtn" disabled>Analyze selected files <span>→</span></button><button class="secondary-btn" id="clearBtn" disabled>Clear</button></div>
-        <div class="progress-wrap" id="progressWrap" hidden><div class="progress-label"><span id="progressText">Preparing analysis…</span><b id="progressPct">0%</b></div><div class="progress-track"><div id="progressBar"></div></div></div>
-        <div id="results" class="results" hidden></div>
-      </article>
-      <article class="panel log-panel"><div class="panel-heading"><div><span class="eyebrow">ACTIVITY STREAM</span><h3>Live Scan Log</h3></div><span class="live-tag"><i></i> LIVE</span></div><div class="log-window" id="logWindow" aria-live="polite"><div class="log-line"><time>--:--:--</time><span class="log-info">[SYSTEM]</span> BMB Web module initialized</div><div class="log-line"><time>--:--:--</time><span class="log-ok">[READY]</span> Waiting for files</div><div class="log-line"><time>--:--:--</time><span class="log-info">[PRIVACY]</span> Analysis runs in this browser</div></div><button class="text-btn" id="clearLogBtn">Clear activity log ↗</button></article>
-    </section>
-    <section class="panel package-panel" id="package-check"><div class="panel-heading"><div><span class="eyebrow">ANDROID PACKAGE INTELLIGENCE</span><h3>Package Threat Lookup</h3></div><span class="pill pill-amber">ADVISORY DATABASE</span></div><p class="muted">Check a package identifier against the bundled BMB package advisory list. A match is not proof that every version of an app is malicious.</p><div class="lookup-row"><input id="packageInput" type="text" placeholder="Example: com.example.app" autocomplete="off"><button class="primary-btn" id="lookupBtn">Check package</button></div><div id="packageResult" class="lookup-result" aria-live="polite">Enter an Android package name to check the local advisory database.</div><div class="db-foot" id="dbFoot">Loading local threat database…</div></section>
-    <section class="panel history-panel" id="history"><div class="panel-heading"><div><span class="eyebrow">SESSION RECORDS</span><h3>Recent Analysis</h3></div><button class="text-btn" id="exportAllBtn">Export session report ↓</button></div><div class="table-wrap"><table><thead><tr><th>FILE</th><th>SIZE</th><th>SHA-256</th><th>ASSESSMENT</th></tr></thead><tbody id="historyBody"><tr><td colspan="4" class="empty-state">No analysis records yet.</td></tr></tbody></table></div></section>
-    <footer><span>© BMB CYBER DEFENSE · WEB EDITION</span><span>PREVIEW BUILD 0.1 <b>•</b> NO SERVER UPLOAD</span></footer>
-  </main>
-</div>
-<div class="toast" id="toast" role="status"></div>
-<script src="./js/app.js"></script>
-</body></html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10233f"><title>ระบบสมาชิก</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:22px;background:linear-gradient(135deg,#0b1730,#173d65);font-family:system-ui,sans-serif;color:#172033}
+main{width:min(100%,560px);background:#fff;border-radius:22px;padding:28px;box-shadow:0 18px 55px #0005}
+h1{margin:0 0 8px;font-size:25px}p{line-height:1.6;color:#526078}
+button{border:0;border-radius:11px;padding:12px 15px;font-size:15px;font-weight:700;cursor:pointer}
+#login{width:100%;background:#1769d2;color:#fff;margin-top:12px}
+#logout{background:#e9eef5;color:#20334e}
+#status{margin:18px 0;padding:13px;border-radius:12px;background:#f1f5f9;overflow-wrap:anywhere}
+.hidden{display:none!important}.panel{border:1px solid #dbe3ee;border-radius:14px;padding:16px;margin-top:18px}
+input{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;margin:8px 0}
+.add{background:#1769d2;color:white;width:100%}.remove{background:#fee2e2;color:#991b1b;padding:8px 10px}
+.member{display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid #e5eaf0;padding:10px 0;overflow-wrap:anywhere}
+.member span{font-size:14px}.small{font-size:13px}
+</style></head>
+<body><main>
+<h1>เว็บไซต์สำหรับสมาชิก</h1>
+<p>เข้าสู่ระบบด้วย Google เฉพาะ Gmail ที่ผู้ดูแลอนุญาตไว้</p>
+<button id="login">เข้าสู่ระบบด้วย Google</button>
+<button id="logout" class="hidden">ออกจากระบบ</button>
+<div id="status" role="status" aria-live="polite">กำลังเตรียมระบบ…</div>
+<section id="memberArea" class="hidden"><h2>ยินดีต้อนรับสมาชิก</h2><p id="memberEmail"></p><p>คุณผ่านการตรวจสอบสิทธิ์แล้ว</p></section>
+<section id="adminArea" class="panel hidden">
+<h2>จัดการสมาชิก (Admin)</h2><p class="small">ผู้ดูแลสามารถเพิ่มและถอนสิทธิ์ Gmail ได้</p>
+<form id="addForm"><label for="newEmail">Gmail สมาชิกใหม่</label><input id="newEmail" type="email" placeholder="member@gmail.com" required><button class="add" type="submit">เพิ่มสมาชิก</button></form>
+<h3>รายชื่อสมาชิก</h3><div id="membersList">กำลังโหลด…</div>
+</section>
+<p class="small">หากเข้าไม่ได้ โปรดติดต่อผู้ดูแลเว็บไซต์</p>
+</main><script type="module" src="./app.js"></script></body></html>

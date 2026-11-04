@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+    function isAdmin() {
+      return signedIn() && request.auth.token.email == "bypassgsm71@gmail.com";
+    }
+    function isActiveMember() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/members/$(request.auth.token.email))
+        && get(/databases/$(database)/documents/members/$(request.auth.token.email)).data.active == true;
+    }
+
+    match /members/{email} {
+      // Admin จัดการรายชื่อได้; สมาชิกอ่านได้เฉพาะเอกสารของตัวเอง
+      allow get: if isAdmin() || (signedIn() && request.auth.token.email == email);
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /memberContent/{document=**} {
+      allow read: if isAdmin() || isActiveMember();
+      allow write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
