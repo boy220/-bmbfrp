@@ -1,22 +1,22 @@
 <!doctype html>
 <html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><title>ADB Uninstall & Scanner Manager</title></head>
 <body><div id="app">
-<header><div><div class="eyebrow">ANDROID DEVICE TOOL</div><h1>ADB Uninstall & Scanner Manager</h1><p class="muted">สแกน ตรวจสอบสิทธิ์ และจัดการแอป Android ผ่าน USB</p></div><span id="badge" class="badge off">ยังไม่เชื่อมต่อ</span></header>
+<header><div><div class="eyebrow">BMB MALWARE / TROJAN ANDROID DEVICE TOOL</div><h1>ADB Uninstall & Scanner Manager</h1><p class="muted">สแกน ตรวจสอบสิทธิ์ และจัดการแอป Android ผ่าน USB</p></div><span id="badge" class="badge off">ยังไม่เชื่อมต่อ</span></header>
 <section class="panel device"><div><div class="label">DEVICE</div><strong id="deviceName">ยังไม่มีอุปกรณ์</strong><div id="deviceInfo" class="muted small">เปิด USB debugging แล้วเชื่อมต่อสาย USB</div></div><div class="actions"><button id="connect" class="primary">เชื่อมต่ออุปกรณ์</button><button id="disconnect" class="secondary" disabled>ตัดการเชื่อมต่อ</button></div></section>
 <section class="panel"><div class="toolbar"><div><h2>ADB SCANNER</h2><div class="muted small">เลือกประเภทการสแกนตาม ScannerForm.vb</div></div><label class="toggle"><input type="checkbox" id="system"> รวมแอประบบ</label></div>
 <div class="scanner-grid toolbar-buttons">
-<button id="scanAll" class="scan-btn" disabled style="width:112px">SCAN APPS</button>
-<button id="scanOverlay" class="scan-btn" disabled style="width:125px">OVERLAY SCAN</button>
-<button id="autoReview" class="scan-btn" disabled style="width:115px">AUTO REVIEW</button>
-<button id="uninstallTop" class="scan-btn danger" disabled style="width:155px">UNINSTALL SELECTED</button>
-<button id="installApk" class="scan-btn" disabled style="width:105px">INSTALL APK</button>
-<button id="scanMalware" class="scan-btn warn" disabled style="width:145px">MALWARE / TROJAN</button>
+<button id="scanAll" class="scan-btn" disabled style="width:112px">🔍เชื่อมมือถือเช็คแอปค้าป</button>
+<button id="scanOverlay" class="scan-btn" disabled style="width:125px">🛡OVERLAY ตรวจสอบแอปเด้งโฆษณา</button>
+<button id="autoReview" class="scan-btn" disabled style="width:115px">🔍ถามก่อน ลบไวัสฐานข้อมูล1เก่า🛡</button>
+<button id="uninstallTop" class="scan-btn danger" disabled style="width:155px">🔍UNINSTALL SELECTED🛡</button>
+<button id="installApk" class="scan-btn" disabled style="width:105px">🔍INSTALL APK🛡</button>
+<button id="scanMalware" class="scan-btn warn" disabled style="width:145px">🔍เช็ค MALWARE/TROJAN🛡</button>
 <button id="deviceManager" class="scan-btn" disabled style="width:135px">DEVICE MANAGER</button>
-<button id="outsideSystem" class="scan-btn" disabled style="width:125px">OUTSIDE SYSTEM</button>
-<button id="scanSpecial" class="scan-btn special" disabled style="width:190px">SPECIAL KEYWORD SCAN</button>
-<button id="autoRemoveSuspicious" class="scan-btn danger-soft" disabled style="width:190px">SCAN + REMOVE RISK APPS</button>
-<button id="scanTargets" class="scan-btn warn" disabled>PACKAGE DATABASE 1</button>
-<button id="scanFull" class="scan-btn danger-soft" disabled>JSON + HEURISTIC SCAN</button>
+<button id="outsideSystem" class="scan-btn" disabled style="width:125px">🔍ตรวจแอปนอกระบบที่สงสัย🛡</button>
+<button id="scanSpecial" class="scan-btn special" disabled style="width:190px">🔍ใหม่-ลบไวัสฐานข้อมูล2🛡</button>
+<button id="autoRemoveSuspicious" class="scan-btn danger-soft" disabled style="width:190px">🔍ลบไวรัสแบบครั้งเดียวจบ🛡</button>
+<button id="scanTargets" class="scan-btn warn" disabled>🔍ฐานข้อมูลไวรัส1🛡</button>
+<button id="scanFull" class="scan-btn danger-soft" disabled>🔍ลบไวัสฐานข้อมูล3เปลียนชื่อมา</button>
 </div>
 <input id="apkFile" type="file" accept=".apk,application/vnd.android.package-archive" hidden>
 <div class="database-row"><span class="file-label">ฐานข้อมูลภัยคุกคาม JSON: โหลดอัตโนมัติจากโฟลเดอร์โปรเจกต์</span><span id="dbStatus" class="muted small">กำลังโหลด JSON...</span></div>
