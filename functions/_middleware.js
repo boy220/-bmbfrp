@@ -78,9 +78,11 @@ function redirectToLogin(request, clearCookie = false) {
 }
 
 export async function onRequest(context) {
-  const request = context.request;
-  const url = new URL(request.url);
-  const pathname = url.pathname;
+const pathname = new URL(context.request.url).pathname;
+
+  if (pathname === "/login.html") {
+    return new Response("LOGIN MIDDLEWARE OK");
+  }
 
   // อนุญาตหน้า Login และ API
   if (
