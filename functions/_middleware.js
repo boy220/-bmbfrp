@@ -1,19 +1,15 @@
 
-
 const FIREBASE_API_KEY = "AIzaSyBAEP9K6mZll3h4Jk4e1IOgjy4I9RsZbas";
 const FIREBASE_PROJECT_ID = "bypassgsm-member";
 const ADMIN_EMAIL = "bypassgsm71@gmail.com";
 const COOKIE_NAME = "__Host-bmb_session";
 
-// ตรวจสอบ Firebase ID Token
 async function verifyFirebaseToken(idToken) {
   const response = await fetch(
     `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${FIREBASE_API_KEY}`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ idToken })
     }
   );
@@ -23,16 +19,13 @@ async function verifyFirebaseToken(idToken) {
   const data = await response.json();
   const user = data.users?.[0];
 
-  if (!user || !user.email || user.emailVerified !== true) {
+  if (!user?.email || user.emailVerified !== true) {
     return null;
   }
 
-  return {
-    email: user.email.toLowerCase()
-  };
+  return { email: user.email.toLowerCase() };
 }
 
-// ตรวจสอบว่าสมาชิกได้รับอนุญาตหรือไม่
 async function isActiveMember(email, idToken) {
   if (email === ADMIN_EMAIL) return true;
 
@@ -41,19 +34,15 @@ async function isActiveMember(email, idToken) {
     `/databases/(default)/documents/members/${encodeURIComponent(email)}`;
 
   const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${idToken}`
-    }
+    headers: { Authorization: `Bearer ${idToken}` }
   });
 
   if (!response.ok) return false;
 
   const data = await response.json();
-
   return data.fields?.active?.booleanValue === true;
 }
 
-// อ่าน Cookie
 function getSessionCookie(request) {
   const cookies = request.headers.get("Cookie") || "";
 
@@ -62,18 +51,29 @@ function getSessionCookie(request) {
     .map(value => value.trim())
     .find(value => value.startsWith(COOKIE_NAME + "="));
 
-  return item ? item.substring(COOKIE_NAME.length + 1) : null;
+  return item
+    ? item.substring(COOKIE_NAME.length + 1)
+    : null;
 }
 
-function redirectToLogin(request) {
-  const url = new URL("/login.html", request.url);
+function redirectToLogin(request, clearCookie = false) {
+  const loginUrl = new URL("/login.html", request.url);
+
+  const headers = new Headers({
+    Location: loginUrl.toString(),
+    "Cache-Control": "no-store"
+  });
+
+  if (clearCookie) {
+    headers.append(
+      "Set-Cookie",
+      `${COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`
+    );
+  }
 
   return new Response(null, {
     status: 302,
-    headers: {
-      Location: url.toString(),
-      "Cache-Control": "private, no-store"
-    }
+    headers
   });
 }
 
@@ -82,15 +82,16 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  // อนุญาตหน้าเข้าสู่ระบบและ API
+  // อนุญาตหน้า Login และ API
   if (
     pathname === "/login.html" ||
+    pathname === "/api" ||
     pathname.startsWith("/api/")
   ) {
     return context.next();
   }
 
-  // อนุญาตไฟล์ประกอบเว็บไซต์ เช่น CSS, JS และรูปภาพ
+  // อนุญาตไฟล์ประกอบเว็บไซต์
   const publicAsset =
     /\.(css|js|mjs|map|png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot)$/i;
 
@@ -98,7 +99,7 @@ export async function onRequest(context) {
     return context.next();
   }
 
-  // ตรวจสอบ Cookie สำหรับหน้าเว็บไซต์
+  // ตรวจสอบ Session
   const idToken = getSessionCookie(request);
 
   if (!idToken) {
@@ -106,21 +107,18 @@ export async function onRequest(context) {
   }
 
   try {
-    // ตรวจสอบ Token กับ Firebase
     const user = await verifyFirebaseToken(idToken);
 
     if (!user) {
-      return redirectToLogin(request);
+      return redirectToLogin(request, true);
     }
 
-    // ตรวจสอบสิทธิ์สมาชิกจาก Firestore
     const allowed = await isActiveMember(user.email, idToken);
 
     if (!allowed) {
-      return redirectToLogin(request);
+      return redirectToLogin(request, true);
     }
 
-    // ผ่านการตรวจสอบแล้ว จึงอนุญาตให้เปิดหน้าเว็บ
     const response = await context.next();
     const headers = new Headers(response.headers);
 
@@ -133,7 +131,6 @@ export async function onRequest(context) {
     });
 
   } catch (error) {
-    // หากตรวจสอบผิดพลาด ให้ปฏิเสธการเข้าถึง
-    return redirectToLogin(request);
+    return redirectToLogin(request, true);
   }
 }
