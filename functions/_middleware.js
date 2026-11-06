@@ -1,5 +1,5 @@
 ```javascript
-const FIREBASE_API_KEY = "AIzaSyBAEP9K6mZll3h4Jk4e4Igjy4I9RsZbas";
+const FIREBASE_API_KEY = "AIzaSyBAEP9K6mZll3h4J4e4Igjy4I9RsZbas";
 const FIREBASE_PROJECT_ID = "bypassgsm-member";
 const ADMIN_EMAIL = "bypassgsm71@gmail.com";
 const COOKIE_NAME = "__Host-bmb_session";
@@ -96,10 +96,10 @@ function redirectToLogin(request, clearCookie = false) {
   });
 }
 
+// ระบบตรวจสอบสิทธิ์สมาชิก
 export async function onRequest(context) {
   const request = context.request;
-  const url = new URL(request.url);
-  const pathname = url.pathname;
+  const pathname = new URL(request.url).pathname;
 
   // อนุญาตหน้า Login
   if (
@@ -126,52 +126,28 @@ export async function onRequest(context) {
     return context.next();
   }
 
-  // อ่าน Cookie
+  // อ่าน Session Cookie
   const idToken = getSessionCookie(request);
 
-  // ไม่มี Cookie
   if (!idToken) {
-    if (pathname === "/__session-check") {
-      return Response.json({
-        test: "SESSION_CHECK",
-        cookiePresent: false,
-        tokenValid: false,
-        memberAllowed: false
-      });
-    }
-
     return redirectToLogin(request);
   }
 
-  // ตรวจสอบ Token
+  // ตรวจสอบ Firebase Token
   const user = await verifyFirebaseToken(idToken);
 
-  // ตรวจสอบสมาชิก
-  const allowed = user
-    ? await isActiveMember(user.email, idToken)
-    : false;
-
-  // URL ตรวจสอบ Session ชั่วคราว
-  // ไม่ส่งค่า Cookie หรือ Token กลับไป
-  if (pathname === "/__session-check") {
-    return Response.json({
-      test: "SESSION_CHECK",
-      cookiePresent: true,
-      tokenValid: !!user,
-      memberAllowed: allowed
-    }, {
-      headers: {
-        "Cache-Control": "no-store"
-      }
-    });
-  }
-
-  // Token ไม่ผ่านหรือสมาชิกไม่ได้รับอนุญาต
-  if (!user || !allowed) {
+  if (!user) {
     return redirectToLogin(request, true);
   }
 
-  // อนุญาตให้เข้าหน้าเว็บไซต์
+  // ตรวจสอบสิทธิ์สมาชิก
+  const allowed = await isActiveMember(user.email, idToken);
+
+  if (!allowed) {
+    return redirectToLogin(request, true);
+  }
+
+  // อนุญาตให้เข้าสู่เว็บไซต์
   const response = await context.next();
   const headers = new Headers(response.headers);
 
