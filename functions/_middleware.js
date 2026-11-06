@@ -104,9 +104,7 @@ export async function onRequest(context) {
   }
 
   // อนุญาต API
-  if (
-    pathname === "/api" ||
-    pathname.startsWith("/api/")
+  if (pathname === "/login.html" || pathname === "/login") {
   ) {
     return context.next();
   }
