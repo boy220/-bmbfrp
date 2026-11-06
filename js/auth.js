@@ -366,11 +366,12 @@ onAuthStateChanged(auth, async (user) => {
     // -----------------------------
 
     if (!email || user.emailVerified !== true) {
-      accessDenied = true;
+  accessDenied = true;
 
-      await signOut(auth);
+  await clearServerSession();
+  await signOut(auth);
 
-      return;
+  return;
     }
 
     // -----------------------------
@@ -383,16 +384,17 @@ onAuthStateChanged(auth, async (user) => {
 
       if (currentCheckId !== authCheckId) return;
 
-      if (
-        !memberSnapshot.exists() ||
-        memberSnapshot.data().active !== true
-      ) {
-        accessDenied = true;
+if (
+  !memberSnapshot.exists() ||
+  memberSnapshot.data().active !== true
+) {
+  accessDenied = true;
 
-        await signOut(auth);
+  await clearServerSession();
+  await signOut(auth);
 
-        return;
-      }
+  return;
+}
     }
 
     // -----------------------------
