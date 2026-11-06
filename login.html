@@ -1,1 +1,140 @@
 
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMBV19unlock - ระบบสมาชิก</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f1f3f8;
+      color: #222;
+    }
+
+    .panel {
+      width: 100%;
+      max-width: 460px;
+      padding: 28px;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 8px 30px rgba(0,0,0,.10);
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin: 8px 0;
+      border: 0;
+      border-radius: 8px;
+      background: #5145cd;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: .9;
+    }
+
+    #logout {
+      background: #666;
+    }
+
+    #status {
+      padding: 12px;
+      margin: 15px 0;
+      background: #f2f2f2;
+      border-radius: 8px;
+      overflow-wrap: anywhere;
+    }
+
+    #memberArea, #adminArea {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
+
+    #newEmail {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin: 8px 0;
+    }
+
+    .back {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: #5145cd;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="panel">
+    <h2>BMBV19unlock</h2>
+    <p style="text-align:center">ระบบเข้าสู่ระบบสมาชิก</p>
+
+    <button id="login" type="button">
+      เข้าสู่ระบบด้วย Google
+    </button>
+
+    <button id="logout" type="button" style="display:none">
+      ออกจากระบบ
+    </button>
+
+    <div id="status">กำลังเตรียมระบบ...</div>
+
+    <section id="memberArea">
+      <h3>สมาชิก</h3>
+      <p>บัญชี: <strong id="memberEmail"></strong></p>
+      <p>คุณได้รับอนุญาตให้เข้าสู่ระบบแล้ว</p>
+    </section>
+
+    <section id="adminArea">
+      <h3>ผู้ดูแลระบบ</h3>
+
+      <form id="addForm">
+        <label for="newEmail">เพิ่ม Gmail สมาชิก</label>
+        <input
+          id="newEmail"
+          type="email"
+          placeholder="example@gmail.com"
+          required
+        >
+        <button type="submit">เพิ่มสมาชิก</button>
+      </form>
+
+      <h3>รายชื่อสมาชิก</h3>
+      <div id="membersList">ยังไม่ได้โหลดข้อมูล</div>
+    </section>
+
+    <a class="back" href="./index.html">
+      กลับหน้าเว็บไซต์
+    </a>
+  </main>
+
+  <script type="module" src="./js/auth.js"></script>
+</body>
+</html>
