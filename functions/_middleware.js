@@ -1,48 +1,66 @@
-
-const FIREBASE_API_KEY = "AIzaSyBAEP9K6mZll3h4J4e1Ogjy4I9RsZbas";
+```javascript
+const FIREBASE_API_KEY = "AIzaSyBAEP9K6mZll3h4Jk4e4Igjy4I9RsZbas";
 const FIREBASE_PROJECT_ID = "bypassgsm-member";
 const ADMIN_EMAIL = "bypassgsm71@gmail.com";
 const COOKIE_NAME = "__Host-bmb_session";
 
+// ตรวจสอบ Firebase ID Token
 async function verifyFirebaseToken(idToken) {
-  const response = await fetch(
-    `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${FIREBASE_API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idToken })
+  try {
+    const response = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${FIREBASE_API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ idToken })
+      }
+    );
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    const user = data.users?.[0];
+
+    if (!user?.email || user.emailVerified !== true) {
+      return null;
     }
-  );
 
-  if (!response.ok) return null;
-
-  const data = await response.json();
-  const user = data.users?.[0];
-
-  if (!user?.email || user.emailVerified !== true) {
+    return {
+      email: user.email.toLowerCase()
+    };
+  } catch {
     return null;
   }
-
-  return { email: user.email.toLowerCase() };
 }
 
+// ตรวจสอบสมาชิกใน Firestore
 async function isActiveMember(email, idToken) {
   if (email === ADMIN_EMAIL) return true;
 
-  const url =
-    `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}` +
-    `/databases/(default)/documents/members/${encodeURIComponent(email)}`;
+  try {
+    const url =
+      `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}` +
+      `/databases/(default)/documents/members/${encodeURIComponent(email)}`;
 
-  const response = await fetch(url, {
-    headers: { Authorization: `Bearer ${idToken}` }
-  });
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${idToken}`
+      }
+    });
 
-  if (!response.ok) return false;
+    if (!response.ok) return false;
 
-  const data = await response.json();
-  return data.fields?.active?.booleanValue === true;
+    const data = await response.json();
+
+    return data.fields?.active?.booleanValue === true;
+  } catch {
+    return false;
+  }
 }
 
+// อ่าน Session Cookie
 function getSessionCookie(request) {
   const cookies = request.headers.get("Cookie") || "";
 
@@ -56,8 +74,9 @@ function getSessionCookie(request) {
     : null;
 }
 
+// ส่งกลับหน้า Login
 function redirectToLogin(request, clearCookie = false) {
-  const loginUrl = new URL("/login.html", request.url);
+  const loginUrl = new URL("/login", request.url);
 
   const headers = new Headers({
     Location: loginUrl.toString(),
@@ -82,37 +101,22 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  // ตรวจสอบผลลัพธ์หน้า Login ชั่วคราว
-  if (pathname === "/login.html") {
-    const response = await context.next();
-
-    return new Response(
-      JSON.stringify({
-        test: "LOGIN_NEXT_RESULT",
-        status: response.status,
-        location: response.headers.get("Location"),
-        contentType: response.headers.get("Content-Type")
-      }, null, 2),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store"
-        }
-      }
-    );
+  // อนุญาตหน้า Login
+  if (
+    pathname === "/login" ||
+    pathname === "/login.html" ||
+    pathname === "/login/"
+  ) {
+    return context.next();
   }
 
   // อนุญาต API
-// อนุญาตหน้า Login และ API
-if (
-  pathname === "/login.html" ||
-  pathname === "/login" ||
-  pathname === "/api" ||
-  pathname.startsWith("/api/")
-) {
-  return context.next();
-}
+  if (
+    pathname === "/api" ||
+    pathname.startsWith("/api/")
+  ) {
+    return context.next();
+  }
 
   // อนุญาตไฟล์ประกอบเว็บไซต์
   const publicAsset =
@@ -122,38 +126,61 @@ if (
     return context.next();
   }
 
-  // ตรวจสอบ Session
+  // อ่าน Cookie
   const idToken = getSessionCookie(request);
 
+  // ไม่มี Cookie
   if (!idToken) {
+    if (pathname === "/__session-check") {
+      return Response.json({
+        test: "SESSION_CHECK",
+        cookiePresent: false,
+        tokenValid: false,
+        memberAllowed: false
+      });
+    }
+
     return redirectToLogin(request);
   }
 
-  try {
-    const user = await verifyFirebaseToken(idToken);
+  // ตรวจสอบ Token
+  const user = await verifyFirebaseToken(idToken);
 
-    if (!user) {
-      return redirectToLogin(request, true);
-    }
+  // ตรวจสอบสมาชิก
+  const allowed = user
+    ? await isActiveMember(user.email, idToken)
+    : false;
 
-    const allowed = await isActiveMember(user.email, idToken);
-
-    if (!allowed) {
-      return redirectToLogin(request, true);
-    }
-
-    const response = await context.next();
-    const headers = new Headers(response.headers);
-
-    headers.set("Cache-Control", "private, no-store");
-
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers
+  // URL ตรวจสอบ Session ชั่วคราว
+  // ไม่ส่งค่า Cookie หรือ Token กลับไป
+  if (pathname === "/__session-check") {
+    return Response.json({
+      test: "SESSION_CHECK",
+      cookiePresent: true,
+      tokenValid: !!user,
+      memberAllowed: allowed
+    }, {
+      headers: {
+        "Cache-Control": "no-store"
+      }
     });
+  }
 
-  } catch (error) {
+  // Token ไม่ผ่านหรือสมาชิกไม่ได้รับอนุญาต
+  if (!user || !allowed) {
     return redirectToLogin(request, true);
   }
+
+  // อนุญาตให้เข้าหน้าเว็บไซต์
+  const response = await context.next();
+  const headers = new Headers(response.headers);
+
+  headers.set("Cache-Control", "private, no-store");
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
+  });
 }
+```
