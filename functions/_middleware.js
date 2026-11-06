@@ -1,5 +1,5 @@
 
-const FIREBASE_API_KEY = "AIzaSyBAEP9K6mZll3h4Jk4e1IOgjy4I9RsZbas";
+const FIREBASE_API_KEY = "AIzaSyBAEP9K6mZll3h4J4e1Ogjy4I9RsZbas";
 const FIREBASE_PROJECT_ID = "bypassgsm-member";
 const ADMIN_EMAIL = "bypassgsm71@gmail.com";
 const COOKIE_NAME = "__Host-bmb_session";
@@ -82,9 +82,29 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  // อนุญาตหน้า Login และ API
+  // ตรวจสอบผลลัพธ์หน้า Login ชั่วคราว
+  if (pathname === "/login.html") {
+    const response = await context.next();
+
+    return new Response(
+      JSON.stringify({
+        test: "LOGIN_NEXT_RESULT",
+        status: response.status,
+        location: response.headers.get("Location"),
+        contentType: response.headers.get("Content-Type")
+      }, null, 2),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store"
+        }
+      }
+    );
+  }
+
+  // อนุญาต API
   if (
-    pathname === "/login.html" ||
     pathname === "/api" ||
     pathname.startsWith("/api/")
   ) {
