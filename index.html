@@ -1,33 +1,199 @@
+
 <!doctype html>
 <html lang="th">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#10233f"><title>ระบบสมาชิก</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10233f">
+<title>BMBV19unlock - ระบบสมาชิก</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:22px;background:linear-gradient(135deg,#0b1730,#173d65);font-family:system-ui,sans-serif;color:#172033}
-main{width:min(100%,560px);background:#fff;border-radius:22px;padding:28px;box-shadow:0 18px 55px #0005}
-h1{margin:0 0 8px;font-size:25px}p{line-height:1.6;color:#526078}
-button{border:0;border-radius:11px;padding:12px 15px;font-size:15px;font-weight:700;cursor:pointer}
-#login{width:100%;background:#1769d2;color:#fff;margin-top:12px}
-#logout{background:#e9eef5;color:#20334e}
-#status{margin:18px 0;padding:13px;border-radius:12px;background:#f1f5f9;overflow-wrap:anywhere}
-.hidden{display:none!important}.panel{border:1px solid #dbe3ee;border-radius:14px;padding:16px;margin-top:18px}
-input{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;margin:8px 0}
-.add{background:#1769d2;color:white;width:100%}.remove{background:#fee2e2;color:#991b1b;padding:8px 10px}
-.member{display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid #e5eaf0;padding:10px 0;overflow-wrap:anywhere}
-.member span{font-size:14px}.small{font-size:13px}
-</style></head>
-<body><main>
-<h1>เว็บไซต์สำหรับสมาชิก</h1>
-<p>เข้าสู่ระบบด้วย Google เฉพาะ Gmail ที่ผู้ดูแลอนุญาตไว้</p>
-<button id="login">เข้าสู่ระบบด้วย Google</button>
-<button id="logout" class="hidden">ออกจากระบบ</button>
-<div id="status" role="status" aria-live="polite">กำลังเตรียมระบบ…</div>
-<section id="memberArea" class="hidden"><h2>ยินดีต้อนรับสมาชิก</h2><p id="memberEmail"></p><p>คุณผ่านการตรวจสอบสิทธิ์แล้ว</p></section>
-<section id="adminArea" class="panel hidden">
-<h2>จัดการสมาชิก (Admin)</h2><p class="small">ผู้ดูแลสามารถเพิ่มและถอนสิทธิ์ Gmail ได้</p>
-<form id="addForm"><label for="newEmail">Gmail สมาชิกใหม่</label><input id="newEmail" type="email" placeholder="member@gmail.com" required><button class="add" type="submit">เพิ่มสมาชิก</button></form>
-<h3>รายชื่อสมาชิก</h3><div id="membersList">กำลังโหลด…</div>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 22px;
+    background: linear-gradient(135deg,#0b1730,#173d65);
+    font-family: system-ui,sans-serif;
+    color: #172033;
+}
+
+main {
+    width: min(100%,560px);
+    background: #fff;
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow: 0 18px 55px #0005;
+}
+
+h1 {
+    margin: 0 0 8px;
+    font-size: 25px;
+}
+
+p {
+    line-height: 1.6;
+    color: #526078;
+}
+
+button {
+    border: 0;
+    border-radius: 11px;
+    padding: 12px 15px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#login {
+    width: 100%;
+    background: #1769d2;
+    color: #fff;
+    margin-top: 12px;
+}
+
+#logout {
+    background: #e9eef5;
+    color: #20334e;
+}
+
+#status {
+    margin: 18px 0;
+    padding: 13px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    overflow-wrap: anywhere;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.panel {
+    border: 1px solid #dbe3ee;
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 18px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 16px;
+    margin: 8px 0;
+}
+
+.add {
+    background: #1769d2;
+    color: white;
+    width: 100%;
+}
+
+.remove {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 8px 10px;
+}
+
+.member {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e5eaf0;
+    padding: 10px 0;
+    overflow-wrap: anywhere;
+}
+
+.member span {
+    font-size: 14px;
+}
+
+.small {
+    font-size: 13px;
+}
+</style>
+</head>
+
+<body>
+<main>
+
+<h1>BMBV19unlock</h1>
+
+<p>
+เข้าสู่ระบบด้วย Google เฉพาะ Gmail
+ที่ผู้ดูแลเว็บไซต์อนุญาตไว้
+</p>
+
+<button id="login">
+เข้าสู่ระบบด้วย Google
+</button>
+
+<button id="logout" class="hidden">
+ออกจากระบบ
+</button>
+
+<div id="status" role="status" aria-live="polite">
+กำลังเตรียมระบบ…
+</div>
+
+<section id="memberArea" class="hidden">
+    <h2>ยินดีต้อนรับสมาชิก</h2>
+    <p id="memberEmail"></p>
+    <p>คุณผ่านการตรวจสอบสิทธิ์แล้ว</p>
 </section>
-<p class="small">หากเข้าไม่ได้ โปรดติดต่อผู้ดูแลเว็บไซต์</p>
-</main><script type="module" src="./app.js"></script></body></html>
+
+<section id="adminArea" class="panel hidden">
+
+    <h2>จัดการสมาชิก (Admin)</h2>
+
+    <p class="small">
+    ผู้ดูแลสามารถเพิ่มและถอนสิทธิ์ Gmail ได้
+    </p>
+
+    <form id="addForm">
+
+        <label for="newEmail">
+        Gmail สมาชิกใหม่
+        </label>
+
+        <input
+            id="newEmail"
+            type="email"
+            placeholder="member@gmail.com"
+            required
+        >
+
+        <button class="add" type="submit">
+        เพิ่มสมาชิก
+        </button>
+
+    </form>
+
+    <h3>รายชื่อสมาชิก</h3>
+
+    <div id="membersList">
+    กำลังโหลด…
+    </div>
+
+</section>
+
+<p class="small">
+หากเข้าไม่ได้ โปรดติดต่อผู้ดูแลเว็บไซต์
+</p>
+
+</main>
+
+<!-- เชื่อมกับ Firebase JavaScript เดิม -->
+<script type="module" src="./js/js.js"></script>
+
+</body>
+</html>
+
