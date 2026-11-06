@@ -6,7 +6,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
-  signOut
+  signOut,
+  getIdToken
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
 import {
@@ -99,6 +100,48 @@ function hideAreas() {
 }
 
 // =====================================
+// CREATE CLOUDFLARE SESSION
+// =====================================
+
+async function createServerSession(user) {
+  const idToken = await getIdToken(user, true);
+
+  const response = await fetch("/api/session", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      idToken
+    })
+  });
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok || result.ok !== true) {
+    throw new Error(
+      result.message || "Cloudflare ไม่อนุญาตให้เข้าสู่ระบบ"
+    );
+  }
+
+  return result;
+}
+
+// =====================================
+// CLEAR CLOUDFLARE SESSION
+// =====================================
+
+async function clearServerSession() {
+  const response = await fetch("/api/logout", {
+    method: "POST"
+  });
+
+  if (!response.ok) {
+    throw new Error("ไม่สามารถยกเลิก Session บนเซิร์ฟเวอร์ได้");
+  }
+}
+
+// =====================================
 // GOOGLE LOGIN
 // =====================================
 
@@ -126,16 +169,29 @@ if (loginBtn) {
 if (logoutBtn) {
   logoutBtn.addEventListener("click", async () => {
     try {
+      showStatus("กำลังออกจากระบบ...");
+
+      await clearServerSession();
       await signOut(auth);
 
-      showStatus("ออกจากระบบแล้ว");
-
       hideAreas();
+      showStatus("ออกจากระบบแล้ว");
 
     } catch (error) {
       console.error(error);
 
-      showStatus("ออกจากระบบไม่สำเร็จ");
+      // ออกจาก Firebase ด้วย แม้เซิร์ฟเวอร์มีปัญหา
+      try {
+        await signOut(auth);
+      } catch (signOutError) {
+        console.error(signOutError);
+      }
+
+      hideAreas();
+
+      showStatus(
+        "ออกจากระบบแล้ว แต่การยกเลิก Session บนเซิร์ฟเวอร์ไม่สำเร็จ กรุณาโหลดหน้าเว็บใหม่"
+      );
     }
   });
 }
@@ -162,7 +218,6 @@ async function refreshMembers() {
     }
 
     snapshot.forEach((memberDoc) => {
-
       const email = memberDoc.id;
       const data = memberDoc.data();
 
@@ -181,7 +236,6 @@ async function refreshMembers() {
       item.appendChild(info);
 
       if (email !== ADMIN_EMAIL) {
-
         const button = document.createElement("button");
 
         button.type = "button";
@@ -190,7 +244,6 @@ async function refreshMembers() {
           active ? "ระงับ" : "เปิดใช้งาน";
 
         button.addEventListener("click", async () => {
-
           try {
             await setDoc(
               doc(db, "members", email),
@@ -234,9 +287,7 @@ async function refreshMembers() {
 // =====================================
 
 if (addForm) {
-
   addForm.addEventListener("submit", async (event) => {
-
     event.preventDefault();
 
     const email = newEmail?.value?.trim().toLowerCase();
@@ -250,7 +301,6 @@ if (addForm) {
     }
 
     try {
-
       await setDoc(
         doc(db, "members", email),
         {
@@ -279,45 +329,35 @@ if (addForm) {
 // LOGIN ACCESS CONTROL
 // =====================================
 
-// จำสถานะบัญชีที่ถูกปฏิเสธ
 let accessDenied = false;
-
-// ป้องกัน callback ทำงานซ้ำ
-let checkingAccess = false;
+let authCheckId = 0;
 
 onAuthStateChanged(auth, async (user) => {
+  const currentCheckId = ++authCheckId;
 
-  if (checkingAccess) return;
+  hideAreas();
 
-  checkingAccess = true;
+  // -----------------------------
+  // NOT LOGGED IN
+  // -----------------------------
+
+  if (!user) {
+    if (accessDenied) {
+      showStatus(
+        "บัญชีนี้ยังไม่ได้รับอนุญาตให้ใช้งาน กรุณาติดต่อผู้ดูแลระบบ"
+      );
+
+      accessDenied = false;
+
+    } else {
+      showStatus("กรุณาเข้าสู่ระบบด้วย Google");
+    }
+
+    return;
+  }
 
   try {
-
-    hideAreas();
-
-    // -----------------------------
-    // NOT LOGGED IN
-    // -----------------------------
-
-    if (!user) {
-
-      if (accessDenied) {
-
-        showStatus(
-          "บัญชีนี้ยังไม่ได้รับอนุญาตให้ใช้งาน กรุณาติดต่อผู้ดูแลระบบ"
-        );
-
-        accessDenied = false;
-
-      } else {
-
-        showStatus(
-          "กรุณาเข้าสู่ระบบด้วย Google"
-        );
-      }
-
-      return;
-    }
+    showStatus("กำลังตรวจสอบสิทธิ์บัญชี...");
 
     const email = user.email?.toLowerCase();
 
@@ -326,49 +366,9 @@ onAuthStateChanged(auth, async (user) => {
     // -----------------------------
 
     if (!email || user.emailVerified !== true) {
-
       accessDenied = true;
 
-      showStatus(
-        "บัญชี Google นี้ไม่ผ่านการยืนยันอีเมล"
-      );
-
       await signOut(auth);
-
-      return;
-    }
-
-    // -----------------------------
-    // ADMIN ACCESS
-    // -----------------------------
-
-    if (email === ADMIN_EMAIL) {
-
-      if (loginBtn) {
-        loginBtn.style.display = "none";
-      }
-
-      if (logoutBtn) {
-        logoutBtn.style.display = "inline-block";
-      }
-
-      if (memberEmail) {
-        memberEmail.textContent = email;
-      }
-
-      if (memberArea) {
-        memberArea.style.display = "block";
-      }
-
-      if (adminArea) {
-        adminArea.style.display = "block";
-      }
-
-      showStatus(
-        "เข้าสู่ระบบผู้ดูแลสำเร็จ"
-      );
-
-      await refreshMembers();
 
       return;
     }
@@ -377,27 +377,39 @@ onAuthStateChanged(auth, async (user) => {
     // CHECK MEMBER PERMISSION
     // -----------------------------
 
-    const memberRef = doc(db, "members", email);
+    if (email !== ADMIN_EMAIL) {
+      const memberRef = doc(db, "members", email);
+      const memberSnapshot = await getDoc(memberRef);
 
-    const memberSnapshot = await getDoc(memberRef);
+      if (currentCheckId !== authCheckId) return;
 
-    if (
-      !memberSnapshot.exists() ||
-      memberSnapshot.data().active !== true
-    ) {
+      if (
+        !memberSnapshot.exists() ||
+        memberSnapshot.data().active !== true
+      ) {
+        accessDenied = true;
 
-      // จำสถานะก่อนออกจากระบบ
-      accessDenied = true;
+        await signOut(auth);
 
-      // ปฏิเสธบัญชีที่ไม่มีสิทธิ์
-      await signOut(auth);
-
-      return;
+        return;
+      }
     }
 
     // -----------------------------
-    // APPROVED MEMBER
+    // CREATE SERVER SESSION
     // -----------------------------
+
+    showStatus("กำลังตรวจสอบสิทธิ์กับเซิร์ฟเวอร์...");
+
+    await createServerSession(user);
+
+    if (currentCheckId !== authCheckId) return;
+
+    // -----------------------------
+    // APPROVED ACCOUNT
+    // -----------------------------
+
+    accessDenied = false;
 
     if (loginBtn) {
       loginBtn.style.display = "none";
@@ -415,25 +427,49 @@ onAuthStateChanged(auth, async (user) => {
       memberArea.style.display = "block";
     }
 
-    showStatus(
-      "เข้าสู่ระบบสำเร็จ"
-    );
+    // -----------------------------
+    // ADMIN ACCESS
+    // -----------------------------
+
+    if (email === ADMIN_EMAIL) {
+      if (adminArea) {
+        adminArea.style.display = "block";
+      }
+
+      showStatus("เข้าสู่ระบบผู้ดูแลสำเร็จ");
+
+      await refreshMembers();
+
+      return;
+    }
+
+    // -----------------------------
+    // MEMBER ACCESS
+    // -----------------------------
+
+    showStatus("เข้าสู่ระบบสำเร็จ");
 
   } catch (error) {
-
     console.error("Authentication error:", error);
 
-    showStatus(
-      "ตรวจสอบสิทธิ์ไม่สำเร็จ กรุณาลองใหม่"
-    );
+    if (currentCheckId !== authCheckId) return;
+
+    accessDenied = true;
+
+    try {
+      await clearServerSession();
+    } catch (sessionError) {
+      console.error(sessionError);
+    }
 
     if (auth.currentUser) {
       await signOut(auth);
     }
 
-  } finally {
+    hideAreas();
 
-    checkingAccess = false;
-
+    showStatus(
+      "ตรวจสอบสิทธิ์ไม่สำเร็จ: " + error.message
+    );
   }
 });
