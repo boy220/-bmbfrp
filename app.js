@@ -4,10 +4,10 @@ import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs } fro
 
 // ตั้งค่า Firebase Web App ของคุณตรงนี้
 const firebaseConfig = {
-  apiKey: "ใส่_API_KEY",
-  authDomain: "ใส่_PROJECT_ID.firebaseapp.com",
-  projectId: "ใส่_PROJECT_ID",
-  appId: "ใส่_APP_ID"
+  apiKey: "AIzaSyBAEP9K6mZll3h4Jk4e1IOgjy4I9RsZbas",
+  authDomain: "bypassgsm-member.firebaseapp.com",
+  projectId: "bypassgsm-member",
+  appId: "1:101151629691:web:fb59a413f205bc5e51ddde"
 };
 
 // บัญชี Admin ที่กำหนดไว้
