@@ -104,10 +104,15 @@ export async function onRequest(context) {
   }
 
   // อนุญาต API
-  if (pathname === "/login.html" || pathname === "/login") {
-  ) {
-    return context.next();
-  }
+// อนุญาตหน้า Login และ API
+if (
+  pathname === "/login.html" ||
+  pathname === "/login" ||
+  pathname === "/api" ||
+  pathname.startsWith("/api/")
+) {
+  return context.next();
+}
 
   // อนุญาตไฟล์ประกอบเว็บไซต์
   const publicAsset =
