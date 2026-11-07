@@ -185,7 +185,9 @@ addForm.addEventListener("submit", async event => {
 
 // Authentication state
 onAuthStateChanged(auth, async user => {
+  console.log("AUTH STATE:", user ? user.email : "NO USER");
 
+  memberArea.classList.add("hidden");
   memberArea.classList.add("hidden");
   adminArea.classList.add("hidden");
   logoutBtn.classList.add("hidden");
