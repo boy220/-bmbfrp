@@ -1,5 +1,5 @@
 ```javascript
-const FIREBASE_API_KEY = "AIzaSyBAEP9K6mZll3h4Jk4e1IOgjy4I9RsZbas";
+const FIREBASE_API_KEY = "AIzaSyBAEP9K6mZll3h4J4eIgjy4I9RsZbas";
 const FIREBASE_PROJECT_ID = "bypassgsm-member";
 const ADMIN_EMAIL = "bypassgsm71@gmail.com";
 const COOKIE_NAME = "__Host-bmb_session";
