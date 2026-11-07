@@ -1,4 +1,4 @@
-
+```javascript
 const FIREBASE_API_KEY = "AIzaSyBAEP9K6mZll3h4J4eIgjy4I9RsZbas";
 const FIREBASE_PROJECT_ID = "bypassgsm-member";
 const ADMIN_EMAIL = "bypassgsm71@gmail.com";
@@ -195,3 +195,4 @@ export async function onRequest(context) {
     headers
   });
 }
+```
