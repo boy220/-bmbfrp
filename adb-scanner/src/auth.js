@@ -1,5 +1,4 @@
 
-
 import { initializeApp } from "firebase/app";
 
 import {
@@ -18,7 +17,8 @@ import {
 
 // Firebase project เดียวกับเว็บไซต์หลัก
 const firebaseConfig = {
-  apiKey: "AIzaSyBAEP9K6mZll3h4Jk4e1IOgjy4I9RsZbas",
+  // ให้นำ API Key เดิมจาก app.js มาใส่ตรงนี้
+  apiKey: "ใส่ API Key เดิมของคุณ",
   authDomain: "bypassgsm-member.firebaseapp.com",
   projectId: "bypassgsm-member",
   appId: "1:101151629691:web:fb59a413f205bc5e51ddde"
@@ -30,6 +30,7 @@ const db = getFirestore(firebaseApp);
 
 const ADMIN_EMAIL = "bypassgsm71@gmail.com";
 
+// DOM elements
 const loginButton = document.getElementById("googleLogin");
 const loginMessage = document.getElementById("loginMessage");
 const authGate = document.getElementById("authGate");
@@ -37,12 +38,16 @@ const app = document.getElementById("app");
 
 let scannerStarted = false;
 let checking = false;
+let logoutButton = null;
 
 function showMessage(message, error = false) {
+  if (!loginMessage) return;
+
   loginMessage.textContent = message;
   loginMessage.style.color = error ? "#ff9aab" : "#91a2ba";
 }
 
+// ตรวจสอบสิทธิ์สมาชิก
 async function checkMember(user) {
   const email = (user.email || "").toLowerCase().trim();
 
@@ -61,11 +66,67 @@ async function checkMember(user) {
     return false;
   }
 
-  const memberData = memberSnapshot.data();
-
-  return memberData.active === true;
+  return memberSnapshot.data().active === true;
 }
 
+// สร้างปุ่มออกจากระบบข้างชื่อ Scanner
+function createLogoutButton() {
+  if (logoutButton) return;
+
+  const heading = document.querySelector("#app header h1");
+
+  if (!heading) {
+    console.error("ไม่พบหัวข้อ ADB Scanner");
+    return;
+  }
+
+  logoutButton = document.createElement("button");
+  logoutButton.id = "scannerLogout";
+  logoutButton.textContent = "ออกจากระบบ";
+
+  logoutButton.style.cssText = `
+    margin-left: 12px;
+    padding: 9px 15px;
+    border: 0;
+    border-radius: 8px;
+    background: #dc3545;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    vertical-align: middle;
+  `;
+
+  logoutButton.addEventListener("click", async () => {
+    const confirmed = confirm(
+      "ยืนยันออกจากระบบทั้งเว็บไซต์หลักและ ADB Scanner หรือไม่?"
+    );
+
+    if (!confirmed) return;
+
+    logoutButton.disabled = true;
+    logoutButton.textContent = "กำลังออกจากระบบ...";
+
+    try {
+      await signOut(auth);
+
+      // Firebase จะส่งสถานะออกจากระบบไปยังหน้าเว็บหลักด้วย
+      showMessage("ออกจากระบบเรียบร้อยแล้ว");
+
+    } catch (error) {
+      console.error("Logout Error:", error);
+
+      logoutButton.disabled = false;
+      logoutButton.textContent = "ออกจากระบบ";
+
+      alert("ออกจากระบบไม่สำเร็จ: " + error.message);
+    }
+  });
+
+  heading.insertAdjacentElement("afterend", logoutButton);
+}
+
+// เปิด Scanner หลังตรวจสอบสมาชิกผ่าน
 async function openScanner() {
   if (scannerStarted) return;
 
@@ -74,24 +135,30 @@ async function openScanner() {
   authGate.hidden = true;
   app.hidden = false;
 
-  showMessage("เข้าสู่ระบบสำเร็จ");
+  createLogoutButton();
 
   try {
     await import("./main.js");
   } catch (error) {
     console.error(error);
+
     showMessage("โหลด ADB Scanner ไม่สำเร็จ", true);
+
     app.hidden = true;
     authGate.hidden = false;
     scannerStarted = false;
   }
 }
 
+// ตรวจสอบบัญชี Google
 async function verifyUser(user) {
   if (!user || checking || scannerStarted) return;
 
   checking = true;
-  loginButton.disabled = true;
+
+  if (loginButton) {
+    loginButton.disabled = true;
+  }
 
   showMessage("กำลังตรวจสอบสิทธิ์สมาชิก...");
 
@@ -100,7 +167,12 @@ async function verifyUser(user) {
 
     if (!allowed) {
       await signOut(auth);
-      showMessage("บัญชีนี้ไม่ได้รับอนุญาตให้ใช้งาน กรุณาติดต่อผู้ดูแลระบบ", true);
+
+      showMessage(
+        "บัญชีนี้ไม่ได้รับอนุญาตให้ใช้งาน กรุณาติดต่อผู้ดูแลระบบ",
+        true
+      );
+
       return;
     }
 
@@ -118,16 +190,22 @@ async function verifyUser(user) {
 
   } finally {
     checking = false;
-    loginButton.disabled = false;
+
+    if (loginButton) {
+      loginButton.disabled = false;
+    }
   }
 }
 
+// Google Login
 loginButton.addEventListener("click", async () => {
   loginButton.disabled = true;
+
   showMessage("กำลังเปิด Google Login...");
 
   try {
     const provider = new GoogleAuthProvider();
+
     provider.setCustomParameters({
       prompt: "select_account"
     });
@@ -149,14 +227,22 @@ loginButton.addEventListener("click", async () => {
   }
 });
 
-// ตรวจสอบสถานะ Login เมื่อเปิดหรือรีเฟรชหน้าเว็บ
+// ตรวจสอบสถานะ Login เมื่อเปิดหรือรีเฟรชหน้า
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     await verifyUser(user);
+
   } else {
     scannerStarted = false;
+
     app.hidden = true;
     authGate.hidden = false;
+
+    if (logoutButton) {
+      logoutButton.remove();
+      logoutButton = null;
+    }
+
     showMessage("กรุณาเข้าสู่ระบบด้วย Google");
   }
 });
