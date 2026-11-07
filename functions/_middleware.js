@@ -99,7 +99,36 @@ function redirectToLogin(request, clearCookie = false) {
 // ระบบตรวจสอบสิทธิ์สมาชิก
 export async function onRequest(context) {
   const request = context.request;
-  const pathname = new URL(request.url).pathname;
+  const pathn  // ตรวจสอบ Session ชั่วคราว
+  if (pathname === "/__session-check") {
+    const idToken = getSessionCookie(request);
+
+    if (!idToken) {
+      return Response.json({
+        cookiePresent: false,
+        tokenValid: false,
+        memberAllowed: false
+      });
+    }
+
+    const user = await verifyFirebaseToken(idToken);
+    const allowed = user
+      ? await isActiveMember(user.email, idToken)
+      : false;
+
+    return Response.json(
+      {
+        cookiePresent: true,
+        tokenValid: !!user,
+        memberAllowed: allowed
+      },
+      {
+        headers: {
+          "Cache-Control": "no-store"
+        }
+      }
+    );
+  }ame = new URL(request.url).pathname;
 
   // อนุญาตหน้า Login
   if (
