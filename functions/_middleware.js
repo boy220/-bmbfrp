@@ -4,6 +4,8 @@ const FIREBASE_PROJECT_ID = "bypassgsm-member";
 const ADMIN_EMAIL = "bypassgsm71@gmail.com";
 const COOKIE_NAME = "__Host-bmb_session";
 
+let firebaseTokenCheck = "not_checked";
+
 // ตรวจสอบ Firebase ID Token
 async function verifyFirebaseToken(idToken) {
   try {
@@ -18,19 +20,33 @@ async function verifyFirebaseToken(idToken) {
       }
     );
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      firebaseTokenCheck =
+        errorData.error?.message || `HTTP_${response.status}`;
+      return null;
+    }
 
     const data = await response.json();
     const user = data.users?.[0];
 
-    if (!user?.email || user.emailVerified !== true) {
+    if (!user?.email) {
+      firebaseTokenCheck = "EMAIL_MISSING";
       return null;
     }
+
+    if (user.emailVerified !== true) {
+      firebaseTokenCheck = "EMAIL_NOT_VERIFIED";
+      return null;
+    }
+
+    firebaseTokenCheck = "OK";
 
     return {
       email: user.email.toLowerCase()
     };
   } catch {
+    firebaseTokenCheck = "NETWORK_ERROR";
     return null;
   }
 }
@@ -53,7 +69,6 @@ async function isActiveMember(email, idToken) {
     if (!response.ok) return false;
 
     const data = await response.json();
-
     return data.fields?.active?.booleanValue === true;
   } catch {
     return false;
@@ -103,6 +118,8 @@ export async function onRequest(context) {
 
   // ตรวจสอบ Session ชั่วคราว
   if (pathname === "/__session-check") {
+    firebaseTokenCheck = "not_checked";
+
     const idToken = getSessionCookie(request);
 
     if (!idToken) {
@@ -110,7 +127,8 @@ export async function onRequest(context) {
         {
           cookiePresent: false,
           tokenValid: false,
-          memberAllowed: false
+          memberAllowed: false,
+          tokenCheckStatus: firebaseTokenCheck
         },
         {
           headers: { "Cache-Control": "no-store" }
@@ -127,7 +145,8 @@ export async function onRequest(context) {
       {
         cookiePresent: true,
         tokenValid: !!user,
-        memberAllowed: allowed
+        memberAllowed: allowed,
+        tokenCheckStatus: firebaseTokenCheck
       },
       {
         headers: {
