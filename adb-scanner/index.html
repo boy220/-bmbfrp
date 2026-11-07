@@ -1,0 +1,324 @@
+
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101827">
+
+  <title>ADB Uninstall & Scanner Manager</title>
+
+  <style>
+    [hidden] {
+      display: none !important;
+    }
+
+    #authGate {
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #101827;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      box-sizing: border-box;
+    }
+
+    #authCard {
+      width: 100%;
+      max-width: 420px;
+      padding: 32px;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      background: #172338;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    #authCard h2 {
+      margin-bottom: 10px;
+    }
+
+    #authCard p {
+      color: #aab8cc;
+      line-height: 1.6;
+    }
+
+    #googleLogin {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #fff;
+      color: #222;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #googleLogin:disabled {
+      opacity: .5;
+      cursor: wait;
+    }
+
+    #loginMessage {
+      margin-top: 18px;
+      color: #aab8cc;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+  </style>
+  <script type="module" crossorigin src="/-bmbfrp/adb-scanner/assets/index-BaHpXUeE.js"></script>
+</head>
+
+<body>
+
+<!-- GOOGLE LOGIN -->
+<div id="authGate">
+  <div id="authCard">
+    <h2>BMB ADB SCANNER</h2>
+
+    <p>ระบบเข้าสู่ระบบสมาชิก</p>
+
+    <p>
+      กรุณาเข้าสู่ระบบด้วย Google
+      เพื่อตรวจสอบสิทธิ์ก่อนใช้งาน
+    </p>
+
+    <button id="googleLogin">
+      เข้าสู่ระบบด้วย Google
+    </button>
+
+    <div id="loginMessage">
+      กรุณาเข้าสู่ระบบด้วย Google
+    </div>
+  </div>
+</div>
+
+<!-- ADB SCANNER -->
+<div id="app" hidden>
+
+<header>
+  <div>
+    <div class="eyebrow">
+      BMB MALWARE / TROJAN ANDROID DEVICE TOOL
+    </div>
+
+    <h1>ADB Uninstall & Scanner Manager</h1>
+
+    <p class="muted">
+      สแกน ตรวจสอบสิทธิ์ และจัดการแอป Android ผ่าน USB
+    </p>
+  </div>
+
+  <span id="badge" class="badge off">
+    ยังไม่เชื่อมต่อ
+  </span>
+</header>
+
+<section class="panel device">
+  <div>
+    <div class="label">DEVICE</div>
+
+    <strong id="deviceName">ยังไม่มีอุปกรณ์</strong>
+
+    <div id="deviceInfo" class="muted small">
+      เปิด USB debugging แล้วเชื่อมต่อสาย USB
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="connect" class="primary">
+      เชื่อมต่ออุปกรณ์
+    </button>
+
+    <button id="disconnect" class="secondary" disabled>
+      ตัดการเชื่อมต่อ
+    </button>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="toolbar">
+    <div>
+      <h2>ADB SCANNER</h2>
+
+      <div class="muted small">
+        เลือกประเภทการสแกนตาม ScannerForm.vb
+      </div>
+    </div>
+
+    <label class="toggle">
+      <input type="checkbox" id="system">
+      รวมแอประบบ
+    </label>
+  </div>
+
+  <div class="scanner-grid toolbar-buttons">
+
+    <button id="scanAll" class="scan-btn" disabled style="width:112px">
+      🔍เชื่อมมือถือเช็คแอปค้าป
+    </button>
+
+    <button id="scanOverlay" class="scan-btn" disabled style="width:125px">
+      🛡OVERLAY ตรวจสอบแอปเด้งโฆษณา
+    </button>
+
+    <button id="autoReview" class="scan-btn" disabled style="width:115px">
+      🔍ถามก่อน ลบไวัสฐานข้อมูล1เก่า🛡
+    </button>
+
+    <button id="uninstallTop" class="scan-btn danger" disabled style="width:155px">
+      🔍UNINSTALL SELECTED🛡
+    </button>
+
+    <button id="installApk" class="scan-btn" disabled style="width:105px">
+      🔍INSTALL APK🛡
+    </button>
+
+    <button id="scanMalware" class="scan-btn warn" disabled style="width:145px">
+      🔍เช็ค MALWARE/TROJAN🛡
+    </button>
+
+    <button id="deviceManager" class="scan-btn" disabled style="width:135px">
+      DEVICE MANAGER
+    </button>
+
+    <button id="outsideSystem" class="scan-btn" disabled style="width:125px">
+      🔍ตรวจแอปนอกระบบที่สงสัย🛡
+    </button>
+
+    <button id="scanSpecial" class="scan-btn special" disabled style="width:190px">
+      🔍ใหม่-ลบไวัสฐานข้อมูล2🛡
+    </button>
+
+    <button id="autoRemoveSuspicious" class="scan-btn danger-soft" disabled style="width:190px">
+      🔍ลบไวรัสแบบครั้งเดียวจบ🛡
+    </button>
+
+    <button id="scanTargets" class="scan-btn warn" disabled>
+      🔍ฐานข้อมูลไวรัส1🛡
+    </button>
+
+    <button id="scanFull" class="scan-btn danger-soft" disabled>
+      🔍ลบไวัสฐานข้อมูล3เปลียนชื่อมา
+    </button>
+
+  </div>
+
+  <input
+    id="apkFile"
+    type="file"
+    accept=".apk,application/vnd.android.package-archive"
+    hidden
+  >
+
+  <div class="database-row">
+    <span class="file-label">
+      ฐานข้อมูลภัยคุกคาม JSON: โหลดอัตโนมัติจากโฟลเดอร์โปรเจกต์
+    </span>
+
+    <span id="dbStatus" class="muted small">
+      กำลังโหลด JSON...
+    </span>
+  </div>
+</section>
+
+<section class="panel">
+
+  <div class="toolbar">
+    <div>
+      <h2>รายการแอป / ผลการตรวจสอบ</h2>
+
+      <div id="count" class="muted small">
+        0 แอป
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="refresh" class="secondary" disabled>
+        รีเฟรช
+      </button>
+    </div>
+  </div>
+
+  <input
+    id="search"
+    class="search"
+    placeholder="ค้นหา Package Name หรือผลการตรวจ..."
+    disabled
+  >
+
+  <div class="selectrow">
+    <label>
+      <input type="checkbox" id="selectAll" disabled>
+      เลือกทั้งหมดที่แสดง
+    </label>
+
+    <span id="selected" class="muted small">
+      เลือก 0
+    </span>
+  </div>
+
+  <div id="list" class="app-list empty">
+    กรุณาเชื่อมต่ออุปกรณ์ก่อน
+  </div>
+
+  <div class="actions bottom-actions">
+    <button id="uninstall" class="danger" disabled>
+      ถอนแอปที่เลือก
+    </button>
+
+    <button id="clear" class="secondary" disabled>
+      ล้างการเลือก
+    </button>
+  </div>
+
+  <p class="note">
+    ผลสแกนเป็นการคัดกรองจากชื่อแพ็กเกจและข้อมูลสิทธิ์
+    ไม่ใช่การยืนยันว่าเป็นมัลแวร์
+    โปรดตรวจสอบก่อนถอนทุกครั้ง
+  </p>
+
+</section>
+
+<section class="panel">
+
+  <div class="toolbar">
+    <h2>ความคืบหน้า</h2>
+
+    <strong id="percent">0%</strong>
+  </div>
+
+  <div class="progress">
+    <div id="bar"></div>
+  </div>
+
+  <div id="status" class="muted small">
+    พร้อมทำงาน
+  </div>
+
+  <div class="loghead">
+    <h2>LOG</h2>
+
+    <button id="clearLog" class="link">
+      ล้าง LOG
+    </button>
+  </div>
+
+  <pre id="log">[INFO] ADB Scanner Manager พร้อมใช้งาน</pre>
+
+</section>
+
+<footer>
+  ใช้ Chrome / Edge บน Windows • เว็บต้องเปิดผ่าน localhost หรือ HTTPS • WebUSB
+</footer>
+
+</div>
+
+<!-- โหลดระบบตรวจสอบสมาชิกก่อน -->
+
+</body>
+</html>
+
