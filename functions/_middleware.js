@@ -1,4 +1,4 @@
-```javascript
+
 const FIREBASE_API_KEY = "AIzaSyBAEP9K6mZll3h4J4eIgjy4I9RsZbas";
 const FIREBASE_PROJECT_ID = "bypassgsm-member";
 const ADMIN_EMAIL = "bypassgsm71@gmail.com";
@@ -99,16 +99,23 @@ function redirectToLogin(request, clearCookie = false) {
 // ระบบตรวจสอบสิทธิ์สมาชิก
 export async function onRequest(context) {
   const request = context.request;
-  const pathn  // ตรวจสอบ Session ชั่วคราว
+  const pathname = new URL(request.url).pathname;
+
+  // ตรวจสอบ Session ชั่วคราว
   if (pathname === "/__session-check") {
     const idToken = getSessionCookie(request);
 
     if (!idToken) {
-      return Response.json({
-        cookiePresent: false,
-        tokenValid: false,
-        memberAllowed: false
-      });
+      return Response.json(
+        {
+          cookiePresent: false,
+          tokenValid: false,
+          memberAllowed: false
+        },
+        {
+          headers: { "Cache-Control": "no-store" }
+        }
+      );
     }
 
     const user = await verifyFirebaseToken(idToken);
@@ -128,7 +135,7 @@ export async function onRequest(context) {
         }
       }
     );
-  }ame = new URL(request.url).pathname;
+  }
 
   // อนุญาตหน้า Login
   if (
@@ -188,4 +195,3 @@ export async function onRequest(context) {
     headers
   });
 }
-```
