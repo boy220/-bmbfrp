@@ -23,7 +23,7 @@ import {
 // Firebase configuration
 const firebaseConfig = {
   // ใส่ API Key เดิมของคุณในเครื่องหมายคำพูดตรงนี้
-  apiKey: "ใส่_API_KEY_เดิมของคุณ",
+  apiKey: "AIzaSyBAEP9K6mZll3h4Jk4e1IOgjy4I9RsZbas",
   authDomain: "bypassgsm-member.firebaseapp.com",
   projectId: "bypassgsm-member",
   appId: "1:101151629691:web:fb59a413f205bc5e51ddde"
