@@ -1,9 +1,161 @@
+
 <!doctype html>
-<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><title>ADB Uninstall & Scanner Manager</title></head>
-<body><div id="app">
-<header><div><div class="eyebrow">BMB MALWARE / TROJAN ANDROID DEVICE TOOL</div><h1>ADB Uninstall & Scanner Manager</h1><p class="muted">สแกน ตรวจสอบสิทธิ์ และจัดการแอป Android ผ่าน USB</p></div><span id="badge" class="badge off">ยังไม่เชื่อมต่อ</span></header>
-<section class="panel device"><div><div class="label">DEVICE</div><strong id="deviceName">ยังไม่มีอุปกรณ์</strong><div id="deviceInfo" class="muted small">เปิด USB debugging แล้วเชื่อมต่อสาย USB</div></div><div class="actions"><button id="connect" class="primary">เชื่อมต่ออุปกรณ์</button><button id="disconnect" class="secondary" disabled>ตัดการเชื่อมต่อ</button></div></section>
-<section class="panel"><div class="toolbar"><div><h2>ADB SCANNER</h2><div class="muted small">เลือกประเภทการสแกนตาม ScannerForm.vb</div></div><label class="toggle"><input type="checkbox" id="system"> รวมแอประบบ</label></div>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>BMB ADB Scanner - ระบบสมาชิก</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    min-height:100vh;
+    background:#0b1220;
+    color:#e8eef8;
+    font-family:system-ui,"Segoe UI",sans-serif;
+}
+
+#authGate{
+    min-height:100vh;
+    display:grid;
+    place-items:center;
+    padding:22px;
+}
+
+.login-card{
+    width:min(100%,440px);
+    padding:30px;
+    background:#121d2e;
+    border:1px solid #26364d;
+    border-radius:18px;
+    box-shadow:0 18px 55px #0005;
+    text-align:center;
+}
+
+.login-card h1{
+    font-size:25px;
+    margin:0 0 10px;
+}
+
+.login-card p{
+    color:#91a2ba;
+    line-height:1.7;
+}
+
+.login-logo{
+    font-size:42px;
+    margin-bottom:12px;
+}
+
+#googleLogin{
+    width:100%;
+    margin-top:18px;
+    padding:14px;
+    border:0;
+    border-radius:10px;
+    background:#3478f6;
+    color:white;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+#googleLogin:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+#loginMessage{
+    margin-top:18px;
+    padding:13px;
+    border-radius:10px;
+    background:#0b1627;
+    color:#91a2ba;
+    font-size:13px;
+    overflow-wrap:anywhere;
+}
+
+.login-footer{
+    color:#72849e;
+    font-size:11px;
+    margin-top:20px;
+}
+
+[hidden]{
+    display:none!important;
+}
+</style>
+</head>
+
+<body>
+
+<!-- หน้าเข้าสู่ระบบ -->
+<div id="authGate">
+    <main class="login-card">
+
+        <div class="login-logo">🛡️</div>
+
+        <h1>BMB ADB Scanner</h1>
+
+        <p>
+        ระบบสมาชิกสำหรับ ADB Uninstall & Scanner Manager
+        <br>
+        กรุณาเข้าสู่ระบบด้วย Gmail ที่ได้รับอนุญาต
+        </p>
+
+        <button id="googleLogin" type="button">
+            เข้าสู่ระบบด้วย Google
+        </button>
+
+        <div id="loginMessage" role="status" aria-live="polite">
+            กรุณาเข้าสู่ระบบด้วย Google
+        </div>
+
+        <div class="login-footer">
+            BMB MALWARE / TROJAN ANDROID DEVICE TOOL
+        </div>
+
+    </main>
+</div>
+
+<!-- ADB Scanner จะถูกเปิดหลังตรวจสอบสมาชิกผ่าน -->
+<div id="app" hidden>
+
+<header>
+<div>
+<div class="eyebrow">BMB MALWARE / TROJAN ANDROID DEVICE TOOL</div>
+<h1>ADB Uninstall & Scanner Manager</h1>
+<p class="muted">สแกน ตรวจสอบสิทธิ์ และจัดการแอป Android ผ่าน USB</p>
+</div>
+<span id="badge" class="badge off">ยังไม่เชื่อมต่อ</span>
+</header>
+
+<section class="panel device">
+<div>
+<div class="label">DEVICE</div>
+<strong id="deviceName">ยังไม่มีอุปกรณ์</strong>
+<div id="deviceInfo" class="muted small">เปิด USB debugging แล้วเชื่อมต่อสาย USB</div>
+</div>
+<div class="actions">
+<button id="connect" class="primary">เชื่อมต่ออุปกรณ์</button>
+<button id="disconnect" class="secondary" disabled>ตัดการเชื่อมต่อ</button>
+</div>
+</section>
+
+<section class="panel">
+<div class="toolbar">
+<div>
+<h2>ADB SCANNER</h2>
+<div class="muted small">เลือกประเภทการสแกนตาม ScannerForm.vb</div>
+</div>
+<label class="toggle">
+<input type="checkbox" id="system"> รวมแอประบบ
+</label>
+</div>
+
 <div class="scanner-grid toolbar-buttons">
 <button id="scanAll" class="scan-btn" disabled style="width:112px">🔍เชื่อมมือถือเช็คแอปค้าป</button>
 <button id="scanOverlay" class="scan-btn" disabled style="width:125px">🛡OVERLAY ตรวจสอบแอปเด้งโฆษณา</button>
@@ -18,10 +170,74 @@
 <button id="scanTargets" class="scan-btn warn" disabled>🔍ฐานข้อมูลไวรัส1🛡</button>
 <button id="scanFull" class="scan-btn danger-soft" disabled>🔍ลบไวัสฐานข้อมูล3เปลียนชื่อมา</button>
 </div>
+
 <input id="apkFile" type="file" accept=".apk,application/vnd.android.package-archive" hidden>
-<div class="database-row"><span class="file-label">ฐานข้อมูลภัยคุกคาม JSON: โหลดอัตโนมัติจากโฟลเดอร์โปรเจกต์</span><span id="dbStatus" class="muted small">กำลังโหลด JSON...</span></div>
+
+<div class="database-row">
+<span class="file-label">ฐานข้อมูลภัยคุกคาม JSON: โหลดอัตโนมัติจากโฟลเดอร์โปรเจกต์</span>
+<span id="dbStatus" class="muted small">กำลังโหลด JSON...</span>
+</div>
 </section>
-<section class="panel"><div class="toolbar"><div><h2>รายการแอป / ผลการตรวจสอบ</h2><div id="count" class="muted small">0 แอป</div></div><div class="actions"><button id="refresh" class="secondary" disabled>รีเฟรช</button></div></div>
-<input id="search" class="search" placeholder="ค้นหา Package Name หรือผลการตรวจ..." disabled><div class="selectrow"><label><input type="checkbox" id="selectAll" disabled> เลือกทั้งหมดที่แสดง</label><span id="selected" class="muted small">เลือก 0</span></div><div id="list" class="app-list empty">กรุณาเชื่อมต่ออุปกรณ์ก่อน</div><div class="actions bottom-actions"><button id="uninstall" class="danger" disabled>ถอนแอปที่เลือก</button><button id="clear" class="secondary" disabled>ล้างการเลือก</button></div><p class="note">ผลสแกนเป็นการคัดกรองจากชื่อแพ็กเกจและข้อมูลสิทธิ์ ไม่ใช่การยืนยันว่าเป็นมัลแวร์ โปรดตรวจสอบก่อนถอนทุกครั้ง</p></section>
-<section class="panel"><div class="toolbar"><h2>ความคืบหน้า</h2><strong id="percent">0%</strong></div><div class="progress"><div id="bar"></div></div><div id="status" class="muted small">พร้อมทำงาน</div><div class="loghead"><h2>LOG</h2><button id="clearLog" class="link">ล้าง LOG</button></div><pre id="log">[INFO] ADB Scanner Manager พร้อมใช้งาน</pre></section>
-<footer>ใช้ Chrome / Edge บน Windows • เว็บต้องเปิดผ่าน localhost หรือ HTTPS • WebUSB</footer></div><script type="module" src="/src/main.js"></script></body></html>
+
+<section class="panel">
+<div class="toolbar">
+<div>
+<h2>รายการแอป / ผลการตรวจสอบ</h2>
+<div id="count" class="muted small">0 แอป</div>
+</div>
+<div class="actions">
+<button id="refresh" class="secondary" disabled>รีเฟรช</button>
+</div>
+</div>
+
+<input id="search" class="search" placeholder="ค้นหา Package Name หรือผลการตรวจ..." disabled>
+
+<div class="selectrow">
+<label><input type="checkbox" id="selectAll" disabled> เลือกทั้งหมดที่แสดง</label>
+<span id="selected" class="muted small">เลือก 0</span>
+</div>
+
+<div id="list" class="app-list empty">กรุณาเชื่อมต่ออุปกรณ์ก่อน</div>
+
+<div class="actions bottom-actions">
+<button id="uninstall" class="danger" disabled>ถอนแอปที่เลือก</button>
+<button id="clear" class="secondary" disabled>ล้างการเลือก</button>
+</div>
+
+<p class="note">
+ผลสแกนเป็นการคัดกรองจากชื่อแพ็กเกจและข้อมูลสิทธิ์
+ไม่ใช่การยืนยันว่าเป็นมัลแวร์ โปรดตรวจสอบก่อนถอนทุกครั้ง
+</p>
+</section>
+
+<section class="panel">
+<div class="toolbar">
+<h2>ความคืบหน้า</h2>
+<strong id="percent">0%</strong>
+</div>
+
+<div class="progress">
+<div id="bar"></div>
+</div>
+
+<div id="status" class="muted small">พร้อมทำงาน</div>
+
+<div class="loghead">
+<h2>LOG</h2>
+<button id="clearLog" class="link">ล้าง LOG</button>
+</div>
+
+<pre id="log">[INFO] ADB Scanner Manager พร้อมใช้งาน</pre>
+</section>
+
+<footer>
+ใช้ Chrome / Edge บน Windows • เว็บต้องเปิดผ่าน localhost หรือ HTTPS • WebUSB
+</footer>
+
+</div>
+
+<!-- ตรวจสอบสมาชิกก่อน แล้วจึงโหลด main.js -->
+<script type="module" src="./src/auth.js"></script>
+
+</body>
+</html>
