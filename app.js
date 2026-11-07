@@ -1,10 +1,11 @@
 
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
 import {
   getAuth,
   GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -21,7 +22,8 @@ import {
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBAEP9K6mZll3h4Jk4e1IOgjy4I9RsZbas",
+  // ใส่ API Key เดิมของคุณในเครื่องหมายคำพูดตรงนี้
+  apiKey: "ใส่_API_KEY_เดิมของคุณ",
   authDomain: "bypassgsm-member.firebaseapp.com",
   projectId: "bypassgsm-member",
   appId: "1:101151629691:web:fb59a413f205bc5e51ddde"
@@ -30,10 +32,12 @@ const firebaseConfig = {
 // Admin email
 const ADMIN_EMAIL = "bypassgsm71@gmail.com";
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// Google Provider
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({
   prompt: "select_account"
@@ -55,26 +59,43 @@ const showStatus = message => {
   if (statusBox) statusBox.textContent = message;
 };
 
-// Google account check
+// Admin check
 const isAdmin = user =>
   user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
 
 // Check required elements
-if (!loginBtn || !logoutBtn || !statusBox ||
-    !memberArea || !adminArea || !emailInput ||
-    !membersList || !addForm) {
+if (
+  !loginBtn || !logoutBtn || !statusBox ||
+  !memberArea || !adminArea || !emailInput ||
+  !membersList || !addForm
+) {
   console.error("BMB: ไม่พบ HTML element ที่ระบบต้องใช้");
   throw new Error("กรุณาตรวจสอบ ID ใน index.html");
 }
 
-// Login
+// Google Popup Login
 loginBtn.addEventListener("click", async () => {
   try {
     showStatus("กำลังเปิด Google Login...");
-    await signInWithRedirect(auth, provider);
+
+    const result = await signInWithPopup(auth, provider);
+
+    console.log("Google Login สำเร็จ:", result.user.email);
+
+    showStatus("เข้าสู่ระบบ Google สำเร็จ กำลังตรวจสอบสมาชิก...");
+
   } catch (error) {
-    console.error("Google Login Error:", error);
-    showStatus("เข้าสู่ระบบไม่สำเร็จ: " + error.message);
+    console.error("Google Login Error:", error.code, error.message);
+
+    if (error.code === "auth/popup-closed-by-user") {
+      showStatus("คุณปิดหน้าต่าง Google Login ก่อนเข้าสู่ระบบ");
+    } else if (error.code === "auth/popup-blocked") {
+      showStatus("เบราว์เซอร์บล็อก Popup กรุณาอนุญาต Popup");
+    } else if (error.code === "auth/unauthorized-domain") {
+      showStatus("เว็บไซต์นี้ยังไม่ได้รับอนุญาตใน Firebase Authorized domains");
+    } else {
+      showStatus("เข้าสู่ระบบไม่สำเร็จ: " + error.message);
+    }
   }
 });
 
@@ -84,21 +105,10 @@ logoutBtn.addEventListener("click", async () => {
     await signOut(auth);
     showStatus("ออกจากระบบแล้ว");
   } catch (error) {
+    console.error("Logout Error:", error);
     showStatus("ออกจากระบบไม่สำเร็จ: " + error.message);
   }
 });
-
-// Redirect result
-getRedirectResult(auth)
-  .then(result => {
-    if (result?.user) {
-      console.log("Google Login สำเร็จ:", result.user.email);
-    }
-  })
-  .catch(error => {
-    console.error("Google Redirect Error:", error);
-    showStatus("Google Login มีปัญหา: " + error.message);
-  });
 
 // Refresh member list
 async function refreshMembers() {
@@ -139,6 +149,7 @@ async function refreshMembers() {
           await refreshMembers();
           showStatus("ถอนสิทธิ์สมาชิกแล้ว");
         } catch (error) {
+          console.error("Remove Member Error:", error);
           showStatus("ถอนสิทธิ์ไม่สำเร็จ: " + error.message);
         }
       });
@@ -188,7 +199,6 @@ onAuthStateChanged(auth, async user => {
   console.log("AUTH STATE:", user ? user.email : "NO USER");
 
   memberArea.classList.add("hidden");
-  memberArea.classList.add("hidden");
   adminArea.classList.add("hidden");
   logoutBtn.classList.add("hidden");
   loginBtn.classList.remove("hidden");
@@ -198,7 +208,6 @@ onAuthStateChanged(auth, async user => {
     return;
   }
 
-  // Login information for debugging
   console.log("LOGIN EMAIL:", user.email);
   console.log("EMAIL VERIFIED:", user.emailVerified);
   console.log("IS ADMIN:", isAdmin(user));
@@ -231,9 +240,10 @@ onAuthStateChanged(auth, async user => {
       doc(db, "members", user.email.toLowerCase())
     );
 
-    if (!memberSnap.exists() ||
-        memberSnap.data().active !== true) {
-
+    if (
+      !memberSnap.exists() ||
+      memberSnap.data().active !== true
+    ) {
       showStatus(
         "ไม่อนุญาตให้เข้าใช้งาน Gmail นี้ไม่ได้อยู่ในรายชื่อสมาชิก"
       );
