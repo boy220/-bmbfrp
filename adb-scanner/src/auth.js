@@ -15,9 +15,9 @@ import {
   getDoc
 } from "firebase/firestore";
 
-// Firebase project เดียวกับเว็บไซต์หลัก
+// Firebase configuration
 const firebaseConfig = {
-  // ให้นำ API Key เดิมจาก app.js มาใส่ตรงนี้
+  // คง API Key จริงตัวเดิมจาก app.js ของคุณ
   apiKey: "ใส่ API Key เดิมของคุณ",
   authDomain: "bypassgsm-member.firebaseapp.com",
   projectId: "bypassgsm-member",
@@ -30,7 +30,6 @@ const db = getFirestore(firebaseApp);
 
 const ADMIN_EMAIL = "bypassgsm71@gmail.com";
 
-// DOM elements
 const loginButton = document.getElementById("googleLogin");
 const loginMessage = document.getElementById("loginMessage");
 const authGate = document.getElementById("authGate");
@@ -38,8 +37,8 @@ const app = document.getElementById("app");
 
 let scannerStarted = false;
 let checking = false;
-let logoutButton = null;
 
+// แสดงข้อความ
 function showMessage(message, error = false) {
   if (!loginMessage) return;
 
@@ -62,32 +61,37 @@ async function checkMember(user) {
   const memberRef = doc(db, "members", email);
   const memberSnapshot = await getDoc(memberRef);
 
-  if (!memberSnapshot.exists()) {
-    return false;
-  }
-
-  return memberSnapshot.data().active === true;
+  return memberSnapshot.exists() &&
+    memberSnapshot.data().active === true;
 }
 
-// สร้างปุ่มออกจากระบบข้างชื่อ Scanner
+// สร้างปุ่มออกจากระบบ
 function createLogoutButton() {
-  if (logoutButton) return;
-
-  const heading = document.querySelector("#app header h1");
+  const heading = document.querySelector(
+    "#app header h1"
+  );
 
   if (!heading) {
     console.error("ไม่พบหัวข้อ ADB Scanner");
     return;
   }
 
-  logoutButton = document.createElement("button");
-  logoutButton.id = "scannerLogout";
-  logoutButton.textContent = "ออกจากระบบ";
+  // ป้องกันสร้างปุ่มซ้ำ
+  if (document.getElementById("scannerLogout")) {
+    return;
+  }
 
-  logoutButton.style.cssText = `
-    margin-left: 12px;
-    padding: 9px 15px;
-    border: 0;
+  const button = document.createElement("button");
+
+  button.id = "scannerLogout";
+  button.type = "button";
+  button.textContent = "ออกจากระบบ";
+
+  button.style.cssText = `
+    display: inline-block;
+    margin-left: 14px;
+    padding: 10px 16px;
+    border: none;
     border-radius: 8px;
     background: #dc3545;
     color: white;
@@ -97,36 +101,38 @@ function createLogoutButton() {
     vertical-align: middle;
   `;
 
-  logoutButton.addEventListener("click", async () => {
+  button.addEventListener("click", async () => {
     const confirmed = confirm(
-      "ยืนยันออกจากระบบทั้งเว็บไซต์หลักและ ADB Scanner หรือไม่?"
+      "ต้องการออกจากระบบทั้งเว็บไซต์หลักและ ADB Scanner ใช่หรือไม่?"
     );
 
     if (!confirmed) return;
 
-    logoutButton.disabled = true;
-    logoutButton.textContent = "กำลังออกจากระบบ...";
+    button.disabled = true;
+    button.textContent = "กำลังออกจากระบบ...";
 
     try {
       await signOut(auth);
 
-      // Firebase จะส่งสถานะออกจากระบบไปยังหน้าเว็บหลักด้วย
       showMessage("ออกจากระบบเรียบร้อยแล้ว");
+
+      // onAuthStateChanged จะพากลับหน้าล็อกอิน
 
     } catch (error) {
       console.error("Logout Error:", error);
 
-      logoutButton.disabled = false;
-      logoutButton.textContent = "ออกจากระบบ";
+      button.disabled = false;
+      button.textContent = "ออกจากระบบ";
 
       alert("ออกจากระบบไม่สำเร็จ: " + error.message);
     }
   });
 
-  heading.insertAdjacentElement("afterend", logoutButton);
+  // วางปุ่มถัดจากชื่อ ADB Scanner
+  heading.insertAdjacentElement("afterend", button);
 }
 
-// เปิด Scanner หลังตรวจสอบสมาชิกผ่าน
+// เปิด Scanner
 async function openScanner() {
   if (scannerStarted) return;
 
@@ -135,10 +141,15 @@ async function openScanner() {
   authGate.hidden = true;
   app.hidden = false;
 
+  // สร้างปุ่มหลังเปิดหน้า Scanner
   createLogoutButton();
 
   try {
     await import("./main.js");
+
+    // สร้างซ้ำอีกครั้งเพื่อรองรับกรณีหน้า Scanner โหลดช้า
+    createLogoutButton();
+
   } catch (error) {
     console.error(error);
 
@@ -150,7 +161,7 @@ async function openScanner() {
   }
 }
 
-// ตรวจสอบบัญชี Google
+// ตรวจสอบบัญชี
 async function verifyUser(user) {
   if (!user || checking || scannerStarted) return;
 
@@ -184,7 +195,7 @@ async function verifyUser(user) {
     await signOut(auth).catch(() => {});
 
     showMessage(
-      error.message || "ตรวจสอบสมาชิกไม่สำเร็จ กรุณาลองใหม่",
+      error.message || "ตรวจสอบสมาชิกไม่สำเร็จ",
       true
     );
 
@@ -198,36 +209,38 @@ async function verifyUser(user) {
 }
 
 // Google Login
-loginButton.addEventListener("click", async () => {
-  loginButton.disabled = true;
+if (loginButton) {
+  loginButton.addEventListener("click", async () => {
+    loginButton.disabled = true;
 
-  showMessage("กำลังเปิด Google Login...");
+    showMessage("กำลังเปิด Google Login...");
 
-  try {
-    const provider = new GoogleAuthProvider();
+    try {
+      const provider = new GoogleAuthProvider();
 
-    provider.setCustomParameters({
-      prompt: "select_account"
-    });
+      provider.setCustomParameters({
+        prompt: "select_account"
+      });
 
-    await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, provider);
 
-  } catch (error) {
-    console.error(error);
+    } catch (error) {
+      console.error(error);
 
-    showMessage(
-      error.code === "auth/popup-closed-by-user"
-        ? "คุณปิดหน้าต่างเข้าสู่ระบบ"
-        : "เข้าสู่ระบบไม่สำเร็จ: " + error.message,
-      true
-    );
+      showMessage(
+        error.code === "auth/popup-closed-by-user"
+          ? "คุณปิดหน้าต่างเข้าสู่ระบบ"
+          : "เข้าสู่ระบบไม่สำเร็จ: " + error.message,
+        true
+      );
 
-  } finally {
-    loginButton.disabled = false;
-  }
-});
+    } finally {
+      loginButton.disabled = false;
+    }
+  });
+}
 
-// ตรวจสอบสถานะ Login เมื่อเปิดหรือรีเฟรชหน้า
+// ตรวจสอบสถานะ Login
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     await verifyUser(user);
@@ -238,9 +251,12 @@ onAuthStateChanged(auth, async (user) => {
     app.hidden = true;
     authGate.hidden = false;
 
-    if (logoutButton) {
-      logoutButton.remove();
-      logoutButton = null;
+    const oldButton = document.getElementById(
+      "scannerLogout"
+    );
+
+    if (oldButton) {
+      oldButton.remove();
     }
 
     showMessage("กรุณาเข้าสู่ระบบด้วย Google");
