@@ -8,9 +8,7 @@
 <title>BMBV19unlock - ระบบสมาชิก</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
@@ -31,15 +29,9 @@ main {
     box-shadow: 0 18px 55px #0005;
 }
 
-h1 {
-    margin: 0 0 8px;
-    font-size: 25px;
-}
+h1 { margin: 0 0 8px; font-size: 25px; }
 
-p {
-    line-height: 1.6;
-    color: #526078;
-}
+p { line-height: 1.6; color: #526078; }
 
 button {
     border: 0;
@@ -48,6 +40,11 @@ button {
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: wait;
 }
 
 #login {
@@ -70,9 +67,7 @@ button {
     overflow-wrap: anywhere;
 }
 
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
 
 .panel {
     border: 1px solid #dbe3ee;
@@ -112,13 +107,8 @@ input {
     overflow-wrap: anywhere;
 }
 
-.member span {
-    font-size: 14px;
-}
-
-.small {
-    font-size: 13px;
-}
+.member span { font-size: 14px; }
+.small { font-size: 13px; }
 </style>
 </head>
 
@@ -132,11 +122,11 @@ input {
 ที่ผู้ดูแลเว็บไซต์อนุญาตไว้
 </p>
 
-<button id="login">
+<button id="login" type="button" disabled>
 เข้าสู่ระบบด้วย Google
 </button>
 
-<button id="logout" class="hidden">
+<button id="logout" class="hidden" type="button">
 ออกจากระบบ
 </button>
 
@@ -151,7 +141,6 @@ input {
 </section>
 
 <section id="adminArea" class="panel hidden">
-
     <h2>จัดการสมาชิก (Admin)</h2>
 
     <p class="small">
@@ -159,10 +148,7 @@ input {
     </p>
 
     <form id="addForm">
-
-        <label for="newEmail">
-        Gmail สมาชิกใหม่
-        </label>
+        <label for="newEmail">Gmail สมาชิกใหม่</label>
 
         <input
             id="newEmail"
@@ -174,15 +160,11 @@ input {
         <button class="add" type="submit">
         เพิ่มสมาชิก
         </button>
-
     </form>
 
     <h3>รายชื่อสมาชิก</h3>
 
-    <div id="membersList">
-    กำลังโหลด…
-    </div>
-
+    <div id="membersList">กำลังโหลด…</div>
 </section>
 
 <p class="small">
@@ -191,9 +173,39 @@ input {
 
 </main>
 
-<!-- เชื่อมกับ Firebase JavaScript เดิม -->
-<script type="module" src="./app.js"></script>
+<!-- ตรวจจับข้อผิดพลาดของ JavaScript -->
+<script>
+window.addEventListener("error", function(event) {
+    const status = document.getElementById("status");
+    const login = document.getElementById("login");
+
+    if (status) {
+        status.textContent =
+            "ระบบเกิดข้อผิดพลาด: " +
+            (event.message || "ไม่สามารถโหลด JavaScript ได้");
+    }
+
+    if (login) login.disabled = false;
+});
+
+window.addEventListener("unhandledrejection", function(event) {
+    const status = document.getElementById("status");
+
+    if (status) {
+        status.textContent =
+            "ระบบเกิดข้อผิดพลาด: " +
+            (event.reason?.message || String(event.reason));
+    }
+});
+</script>
+
+<!-- Firebase Login -->
+<script
+    type="module"
+    src="./app.js"
+    onload="document.getElementById('login').disabled=false"
+    onerror="document.getElementById('status').textContent='โหลด app.js ไม่สำเร็จ กรุณาตรวจสอบไฟล์'">
+</script>
 
 </body>
 </html>
-
