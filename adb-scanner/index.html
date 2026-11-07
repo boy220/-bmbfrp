@@ -12,7 +12,6 @@
     [hidden] {
       display: none !important;
     }
-
     #authGate {
       min-height: 85vh;
       display: flex;
@@ -35,7 +34,6 @@
       text-align: center;
       box-sizing: border-box;
     }
-
     #authCard h2 {
       margin-bottom: 10px;
     }
@@ -61,7 +59,6 @@
       opacity: .5;
       cursor: wait;
     }
-
     #loginMessage {
       margin-top: 18px;
       color: #aab8cc;
@@ -69,7 +66,9 @@
       overflow-wrap: anywhere;
     }
   </style>
-  <script type="module" src="/src/main.js"></script>
+
+  <!-- โหลดระบบตรวจสอบสมาชิกก่อน -->
+  <script type="module" src="/src/auth.js"></script>
 </head>
 
 <body>
@@ -89,7 +88,6 @@
     <button id="googleLogin">
       เข้าสู่ระบบด้วย Google
     </button>
-
     <div id="loginMessage">
       กรุณาเข้าสู่ระบบด้วย Google
     </div>
@@ -160,7 +158,6 @@
     <button id="scanAll" class="scan-btn" disabled style="width:112px">
       🔍เชื่อมมือถือเช็คแอปค้าป
     </button>
-
     <button id="scanOverlay" class="scan-btn" disabled style="width:125px">
       🛡OVERLAY ตรวจสอบแอปเด้งโฆษณา
     </button>
@@ -176,7 +173,6 @@
     <button id="installApk" class="scan-btn" disabled style="width:105px">
       🔍INSTALL APK🛡
     </button>
-
     <button id="scanMalware" class="scan-btn warn" disabled style="width:145px">
       🔍เช็ค MALWARE/TROJAN🛡
     </button>
@@ -192,7 +188,6 @@
     <button id="scanSpecial" class="scan-btn special" disabled style="width:190px">
       🔍ใหม่-ลบไวัสฐานข้อมูล2🛡
     </button>
-
     <button id="autoRemoveSuspicious" class="scan-btn danger-soft" disabled style="width:190px">
       🔍ลบไวรัสแบบครั้งเดียวจบ🛡
     </button>
@@ -213,7 +208,6 @@
     accept=".apk,application/vnd.android.package-archive"
     hidden
   >
-
   <div class="database-row">
     <span class="file-label">
       ฐานข้อมูลภัยคุกคาม JSON: โหลดอัตโนมัติจากโฟลเดอร์โปรเจกต์
@@ -235,7 +229,6 @@
         0 แอป
       </div>
     </div>
-
     <div class="actions">
       <button id="refresh" class="secondary" disabled>
         รีเฟรช
@@ -260,7 +253,6 @@
       เลือก 0
     </span>
   </div>
-
   <div id="list" class="app-list empty">
     กรุณาเชื่อมต่ออุปกรณ์ก่อน
   </div>
@@ -284,7 +276,6 @@
 </section>
 
 <section class="panel">
-
   <div class="toolbar">
     <h2>ความคืบหน้า</h2>
 
@@ -310,15 +301,11 @@
   <pre id="log">[INFO] ADB Scanner Manager พร้อมใช้งาน</pre>
 
 </section>
-
 <footer>
   ใช้ Chrome / Edge บน Windows • เว็บต้องเปิดผ่าน localhost หรือ HTTPS • WebUSB
 </footer>
 
 </div>
 
-<!-- โหลดระบบตรวจสอบสมาชิกก่อน -->
-
 </body>
 </html>
-
