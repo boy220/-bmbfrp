@@ -4,97 +4,194 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#101827">
+  <meta name="theme-color" content="#07152b">
 
-  <title>ADB Uninstall & Scanner Manager</title>
+  <title>BMB ADB Scanner Manager</title>
 
   <style>
     [hidden] {
       display: none !important;
     }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    /* =========================
+       BMB NEON BLUE LOGIN
+    ========================= */
+
     #authGate {
-      min-height: 85vh;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
-      background: #101827;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      box-sizing: border-box;
+      background:
+        radial-gradient(
+          ellipse at 50% 40%,
+          #123b70 0%,
+          transparent 55%
+        ),
+        linear-gradient(
+          135deg,
+          #050b18,
+          #101d35 55%,
+          #061225
+        );
       color: #fff;
       font-family: Arial, sans-serif;
-      box-sizing: border-box;
     }
 
+    /* โลโก้ BMB จาง ๆ เป็นพื้นหลัง */
+    #authGate::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-image: url("./assets/bmb-logo.png");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: min(85vw, 850px) auto;
+      opacity: 0.10;
+      filter: drop-shadow(0 0 30px #008cff);
+      pointer-events: none;
+    }
+
+    /* แสงรอบพื้นหลัง */
+    #authGate::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: radial-gradient(
+        circle at center,
+        transparent 15%,
+        rgba(0, 5, 18, 0.55) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* กล่อง Login */
     #authCard {
+      position: relative;
+      z-index: 1;
       width: 100%;
-      max-width: 420px;
-      padding: 32px;
-      border: 1px solid #334155;
-      border-radius: 16px;
-      background: #172338;
+      max-width: 430px;
+      padding: 35px 30px;
+      border: 1px solid rgba(65, 165, 255, 0.55);
+      border-radius: 22px;
+      background: rgba(8, 20, 40, 0.93);
+      box-shadow:
+        0 0 25px rgba(0, 130, 255, 0.22),
+        0 0 70px rgba(0, 100, 255, 0.12),
+        inset 0 0 25px rgba(30, 120, 255, 0.06);
       text-align: center;
       box-sizing: border-box;
+      backdrop-filter: blur(12px);
     }
-#authCard h2 {
-  margin-bottom: 10px;
-}
 
-.brand-logo {
-  display: block;
-  width: 220px;
-  max-width: 90%;
-  height: auto;
-  margin: 0 auto 18px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 12px rgba(0, 145, 255, .35));
-}
+    /* โลโก้ด้านบน */
+    .brand-logo {
+      display: block;
+      width: 240px;
+      max-width: 85%;
+      height: auto;
+      margin: 0 auto 18px;
+      object-fit: contain;
+      filter: drop-shadow(
+        0 0 12px rgba(0, 145, 255, 0.45)
+      );
+    }
+
+    /* หัวข้อ */
+    #authCard h2 {
+      margin: 0 0 12px;
+      color: #fff;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 12px rgba(0, 145, 255, 0.6);
+    }
 
     #authCard p {
-      color: #aab8cc;
-      line-height: 1.6;
+      color: #b9cbe5;
+      line-height: 1.7;
     }
 
+    /* ปุ่ม Google */
     #googleLogin {
       width: 100%;
-      padding: 14px;
-      border: 0;
-      border-radius: 8px;
+      margin-top: 12px;
+      padding: 15px;
+      border: 1px solid #dbeafe;
+      border-radius: 10px;
       background: #fff;
-      color: #222;
+      color: #172338;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #googleLogin:hover {
+      background: #e5f2ff;
+      box-shadow: 0 0 18px rgba(0, 145, 255, 0.4);
     }
 
     #googleLogin:disabled {
-      opacity: .5;
+      opacity: 0.5;
       cursor: wait;
     }
+
+    /* ข้อความแจ้งสถานะ */
     #loginMessage {
       margin-top: 18px;
       color: #aab8cc;
       font-size: 14px;
       overflow-wrap: anywhere;
     }
+
+    /* มือถือ */
+    @media (max-width: 480px) {
+      #authGate {
+        padding: 16px;
+      }
+
+      #authCard {
+        padding: 28px 20px;
+      }
+
+      .brand-logo {
+        width: 210px;
+      }
+    }
   </style>
 
-  <!-- โหลดระบบตรวจสอบสมาชิกก่อน -->
-  <script type="module" src="/src/auth.js"></script>
+  <!-- โหลดระบบตรวจสอบสมาชิก -->
+  <script type="module" src="./src/auth.js"></script>
 </head>
 
 <body>
 
-<!-- GOOGLE LOGIN -->
+<!-- =========================
+     GOOGLE LOGIN
+========================= -->
+
 <div id="authGate">
   <div id="authCard">
 
     <!-- BMB LOGO -->
     <img
-      src="../assets/bmb-logo.png"
-      alt="BMB BYPASS GSM ไทย"
+      src="./assets/bmb-logo.png"
+      alt="BMB BYPASS GSM"
       class="brand-logo"
     >
 
-    <h2>BMB ADB SCANNER ไทย</h2>
+    <h2>BMB ADB SCANNER</h2>
 
     <p>ระบบเข้าสู่ระบบสมาชิก</p>
 
@@ -114,7 +211,10 @@
   </div>
 </div>
 
-<!-- ADB SCANNER -->
+<!-- =========================
+     ADB SCANNER
+========================= -->
+
 <div id="app" hidden>
 
 <header>
@@ -178,6 +278,7 @@
     <button id="scanAll" class="scan-btn" disabled style="width:112px">
       🔍เชื่อมมือถือเช็คแอปค้าป
     </button>
+
     <button id="scanOverlay" class="scan-btn" disabled style="width:125px">
       🛡OVERLAY ตรวจสอบแอปเด้งโฆษณา
     </button>
@@ -193,6 +294,7 @@
     <button id="installApk" class="scan-btn" disabled style="width:105px">
       🔍INSTALL APK🛡
     </button>
+
     <button id="scanMalware" class="scan-btn warn" disabled style="width:145px">
       🔍เช็ค MALWARE/TROJAN🛡
     </button>
@@ -208,6 +310,7 @@
     <button id="scanSpecial" class="scan-btn special" disabled style="width:190px">
       🔍ใหม่-ลบไวัสฐานข้อมูล2🛡
     </button>
+
     <button id="autoRemoveSuspicious" class="scan-btn danger-soft" disabled style="width:190px">
       🔍ลบไวรัสแบบครั้งเดียวจบ🛡
     </button>
@@ -228,6 +331,7 @@
     accept=".apk,application/vnd.android.package-archive"
     hidden
   >
+
   <div class="database-row">
     <span class="file-label">
       ฐานข้อมูลภัยคุกคาม JSON: โหลดอัตโนมัติจากโฟลเดอร์โปรเจกต์
@@ -249,6 +353,7 @@
         0 แอป
       </div>
     </div>
+
     <div class="actions">
       <button id="refresh" class="secondary" disabled>
         รีเฟรช
@@ -273,6 +378,7 @@
       เลือก 0
     </span>
   </div>
+
   <div id="list" class="app-list empty">
     กรุณาเชื่อมต่ออุปกรณ์ก่อน
   </div>
@@ -321,6 +427,7 @@
   <pre id="log">[INFO] ADB Scanner Manager พร้อมใช้งาน</pre>
 
 </section>
+
 <footer>
   ใช้ Chrome / Edge บน Windows • เว็บต้องเปิดผ่าน localhost หรือ HTTPS • WebUSB
 </footer>
