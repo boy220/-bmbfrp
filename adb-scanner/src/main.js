@@ -2,6 +2,7 @@ import { Adb, AdbDaemonTransport } from "@yume-chan/adb";
 import AdbWebCredentialStore from "@yume-chan/adb-credential-web";
 import { AdbDaemonWebUsbDeviceManager } from "@yume-chan/adb-daemon-webusb";
 import "./style.css";
+import { getAppIcon } from "./app-icons.js";
 
 const $ = id => document.getElementById(id);
 const credentials = new AdbWebCredentialStore("ADBUninstallManager");
