@@ -22,13 +22,13 @@ function loadParser() {
         resolve(window.AppInfoParser);
       } else {
         parserPromise = null;
-        reject(new Error("ไม่พบตัวอ่าน APK"));
+        reject(new Error("ไม่พบ AppInfoParser"));
       }
     };
 
     script.onerror = () => {
       parserPromise = null;
-      reject(new Error("โหลดตัวอ่าน APK จาก CDN ไม่สำเร็จ"));
+      reject(new Error("โหลดตัวอ่าน APK ไม่สำเร็จ"));
     };
 
     document.head.appendChild(script);
@@ -47,8 +47,18 @@ export async function getAppIcon(adb, packageName) {
   try {
     const AppInfoParser = await loadParser();
 
-    const output = await adb.subprocess.shellProtocol
-      .spawnWaitText(`pm path ${packageName}`);
+    const shellResult = await adb.subprocess.shellProtocol
+      .spawnWaitText(`pm path '${packageName}'`);
+
+    // อ่าน stdout จากผลลัพธ์ ADB
+    const output = typeof shellResult === "string"
+      ? shellResult
+      : shellResult?.stdout || "";
+
+    if (shellResult?.exitCode !== undefined &&
+        shellResult.exitCode !== 0) {
+      throw new Error(shellResult.stderr || "คำสั่ง pm path ล้มเหลว");
+    }
 
     const paths = String(output)
       .split(/\r?\n/)
@@ -56,14 +66,14 @@ export async function getAppIcon(adb, packageName) {
       .filter(path => path.endsWith(".apk"));
 
     if (!paths.length) {
-      console.warn("ไม่พบไฟล์ APK:", packageName);
+      console.warn("ไม่พบเส้นทาง APK:", packageName, shellResult);
       return null;
     }
 
     const apkPath =
       paths.find(path => path.endsWith("/base.apk")) || paths[0];
 
-    // เปิด ADB Sync ให้ถูกต้องก่อนอ่านไฟล์
+    // เปิดบริการ ADB Sync
     sync = await adb.sync();
 
     const chunks = [];
@@ -79,21 +89,18 @@ export async function getAppIcon(adb, packageName) {
     const parser = new AppInfoParser(apkBlob);
     const result = await parser.parse();
 
-    if (!result || !result.icon) {
-      console.warn("ไม่พบไอคอนใน APK:", packageName);
+    if (!result?.icon) {
+      console.warn("APK ไม่มีข้อมูลไอคอน:", packageName);
       return null;
     }
 
     let icon = result.icon;
 
-    if (
-      typeof icon === "string" &&
-      !icon.startsWith("data:image/")
-    ) {
+    if (typeof icon !== "string") return null;
+
+    if (!icon.startsWith("data:image/")) {
       icon = `data:image/png;base64,${icon}`;
     }
-
-    if (typeof icon !== "string") return null;
 
     iconCache.set(packageName, icon);
     return icon;
