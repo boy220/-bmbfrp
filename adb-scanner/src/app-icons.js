@@ -1,7 +1,6 @@
 
-
 const PARSER_URL =
-  "https://unpkg.com/app-info-parser@1.1.6/dist/app-info-parser.min.js";
+  "https://cdn.jsdelivr.net/npm/app-info-parser@1.1.6/dist/app-info-parser.min.js";
 
 let parserPromise = null;
 const iconCache = new Map();
@@ -15,7 +14,6 @@ function loadParser() {
 
   parserPromise = new Promise((resolve, reject) => {
     const script = document.createElement("script");
-
     script.src = PARSER_URL;
     script.async = true;
 
@@ -23,13 +21,14 @@ function loadParser() {
       if (window.AppInfoParser) {
         resolve(window.AppInfoParser);
       } else {
-        reject(new Error("ไม่พบ AppInfoParser"));
+        parserPromise = null;
+        reject(new Error("ไม่พบตัวอ่าน APK"));
       }
     };
 
     script.onerror = () => {
       parserPromise = null;
-      reject(new Error("โหลดตัวอ่าน APK ไม่สำเร็จ"));
+      reject(new Error("โหลดตัวอ่าน APK จาก CDN ไม่สำเร็จ"));
     };
 
     document.head.appendChild(script);
@@ -43,6 +42,8 @@ export async function getAppIcon(adb, packageName) {
     return iconCache.get(packageName);
   }
 
+  let sync;
+
   try {
     const AppInfoParser = await loadParser();
 
@@ -54,14 +55,20 @@ export async function getAppIcon(adb, packageName) {
       .map(line => line.trim().replace(/^package:/, ""))
       .filter(path => path.endsWith(".apk"));
 
-    if (!paths.length) return null;
+    if (!paths.length) {
+      console.warn("ไม่พบไฟล์ APK:", packageName);
+      return null;
+    }
 
     const apkPath =
       paths.find(path => path.endsWith("/base.apk")) || paths[0];
 
+    // เปิด ADB Sync ให้ถูกต้องก่อนอ่านไฟล์
+    sync = await adb.sync();
+
     const chunks = [];
 
-    for await (const chunk of adb.sync.read(apkPath)) {
+    for await (const chunk of sync.read(apkPath)) {
       chunks.push(chunk);
     }
 
@@ -72,12 +79,17 @@ export async function getAppIcon(adb, packageName) {
     const parser = new AppInfoParser(apkBlob);
     const result = await parser.parse();
 
-    if (!result || !result.icon) return null;
+    if (!result || !result.icon) {
+      console.warn("ไม่พบไอคอนใน APK:", packageName);
+      return null;
+    }
 
     let icon = result.icon;
 
-    if (typeof icon === "string" &&
-        !icon.startsWith("data:image/")) {
+    if (
+      typeof icon === "string" &&
+      !icon.startsWith("data:image/")
+    ) {
       icon = `data:image/png;base64,${icon}`;
     }
 
@@ -87,12 +99,16 @@ export async function getAppIcon(adb, packageName) {
     return icon;
 
   } catch (error) {
-    console.warn(
-      "ไม่สามารถดึงไอคอน:",
-      packageName,
-      error
-    );
-
+    console.warn("ดึงไอคอนไม่สำเร็จ:", packageName, error);
     return null;
+
+  } finally {
+    if (sync) {
+      try {
+        await sync.dispose();
+      } catch (error) {
+        console.warn("ปิด ADB Sync ไม่สำเร็จ:", error);
+      }
+    }
   }
 }
