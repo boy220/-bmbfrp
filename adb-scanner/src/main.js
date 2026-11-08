@@ -19,7 +19,121 @@ function progress(v,msg){$ ("bar").style.width=`${Math.max(0,Math.min(100,v))}%`
 function setConnected(ok,model="Android device"){$ ("badge").textContent=ok?"เชื่อมต่อแล้ว":"ยังไม่เชื่อมต่อ";$ ("badge").className=`badge ${ok?"on":"off"}`;$ ("deviceName").textContent=ok?model:"ยังไม่มีอุปกรณ์";$ ("deviceInfo").textContent=ok?"ADB Authorized • WebUSB":"เปิด USB debugging แล้วเชื่อมต่อสาย USB";$ ("connect").disabled=ok;$ ("disconnect").disabled=!ok;$ ("refresh").disabled=!ok;$ ("search").disabled=!ok;for(const id of ["scanAll","scanOverlay","scanMalware","scanTargets","scanFull","scanSpecial","autoReview","uninstallTop","installApk","deviceManager","outsideSystem","autoRemoveSuspicious"])$(id).disabled=!ok||busy;$("system").disabled=!ok;}
 async function runShell(command){if(!adb)throw Error("ยังไม่ได้เชื่อมต่ออุปกรณ์");const sp=adb.subprocess.shellProtocol;if(sp&&typeof sp.spawnWaitText==="function"){const r=await sp.spawnWaitText(command);if(r.exitCode!==0)throw Error(r.stderr||`ADB exit ${r.exitCode}`);return r.stdout||"";}const np=adb.subprocess.noneProtocol;if(np&&typeof np.spawnWaitText==="function")return await np.spawnWaitText(command);throw Error("ไม่พบ ADB Subprocess API ที่รองรับ");}
 function updateSelection(){const q=$("search").value.trim().toLowerCase();const visible=packages.filter(p=>(p.name+" "+p.status).toLowerCase().includes(q));const n=packages.filter(p=>p.selected).length;$("selected").textContent=`เลือก ${n}`;$ ("uninstall").disabled=!adb||!n||busy;$ ("clear").disabled=!n||busy;$ ("selectAll").disabled=!visible.length;$ ("selectAll").checked=visible.length>0&&visible.every(p=>p.selected);}
-function render(){const q=$("search").value.trim().toLowerCase();const visible=packages.filter(p=>(p.name+" "+p.status).toLowerCase().includes(q));const list=$("list");list.replaceChildren();list.className="app-list";if(!visible.length){list.className="app-list empty";list.textContent="ไม่พบรายการแอป";}for(const p of visible){const row=document.createElement("div");row.className=`app-item ${p.level||"normal"}`;row.dataset.scanLevel=p.level||"normal";const cb=document.createElement("input");cb.type="checkbox";cb.checked=p.selected;cb.disabled=busy;cb.addEventListener("change",()=>{p.selected=cb.checked;updateSelection();});const body=document.createElement("div");body.className="app-body";const name=document.createElement("div");name.className="pkg";name.textContent=p.name;const status=document.createElement("div");status.className="result-status";status.textContent=p.status;body.append(name,status);row.append(cb,body);if(p.system){const tag=document.createElement("span");tag.className="system";tag.textContent="SYSTEM";row.append(tag);}list.append(row);}$("count").textContent=`${packages.length} แอป`;updateSelection();}
+
+function render() {
+  const q = $("search").value.trim().toLowerCase();
+  const visible = packages.filter(p =>
+    (p.name + " " + p.status).toLowerCase().includes(q)
+  );
+
+  const list = $("list");
+  list.replaceChildren();
+  list.className = "app-list";
+
+  if (!visible.length) {
+    list.className = "app-list empty";
+    list.textContent = "ไม่พบรายการแอป";
+  }
+
+  for (const p of visible) {
+    const row = document.createElement("div");
+
+    // คงสีและระดับการตรวจจับเดิม
+    row.className = `app-item ${p.level || "normal"}`;
+    row.dataset.scanLevel = p.level || "normal";
+
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = p.selected;
+    cb.disabled = busy;
+
+    cb.addEventListener("change", () => {
+      p.selected = cb.checked;
+      updateSelection();
+    });
+
+    // ส่วนแสดงข้อมูลแอป
+    const body = document.createElement("div");
+    body.className = "app-body";
+
+    const heading = document.createElement("div");
+    heading.className = "app-heading";
+
+    // ไอคอนจริง หรือไอคอนสำรอง
+    const icon = document.createElement("div");
+    icon.className = "app-icon";
+
+    const fallback = document.createElement("span");
+    fallback.className = "app-icon-fallback";
+    fallback.textContent = "📱";
+    icon.append(fallback);
+
+    if (p.icon) {
+      const img = document.createElement("img");
+      img.src = p.icon;
+      img.alt = "";
+      img.className = "app-icon-image";
+
+      img.onerror = () => {
+        img.remove();
+      };
+
+      icon.replaceChildren(img);
+    }
+
+    heading.append(icon);
+
+    const name = document.createElement("div");
+    name.className = "pkg";
+    name.textContent = p.name;
+
+    const status = document.createElement("div");
+    status.className = "result-status";
+    status.textContent = p.status;
+
+    heading.append(name);
+    body.append(heading, status);
+
+    row.append(cb, body);
+
+    if (p.system) {
+      const tag = document.createElement("span");
+      tag.className = "system";
+      tag.textContent = "SYSTEM";
+      row.append(tag);
+    }
+
+    list.append(row);
+
+    // ดึงไอคอนเฉพาะเมื่อรายการนั้นยังไม่มีไอคอน
+    if (!p.icon && adb) {
+      getAppIcon(adb, p.name).then(appIcon => {
+        if (!appIcon) return;
+
+        p.icon = appIcon;
+
+        if (row.isConnected) {
+          const img = document.createElement("img");
+          img.src = appIcon;
+          img.alt = "";
+          img.className = "app-icon-image";
+
+          img.onerror = () => {
+            img.remove();
+          };
+
+          icon.replaceChildren(img);
+        }
+      }).catch(error => {
+        console.warn("โหลดไอคอนไม่สำเร็จ:", p.name, error);
+      });
+    }
+  }
+
+  $("count").textContent = `${packages.length} แอป`;
+  updateSelection();
+}
+
 function addResult(name,status,level="normal",selected=false,system=false){packages.push({name,status,level,selected,system});}
 function replaceResults(){packages=[];}
 function parsePackages(output){return [...new Set(output.split(/\r?\n/).map(x=>x.trim().replace(/^package:/,"" )).filter(x=>PKG_RE.test(x)))].sort();}
