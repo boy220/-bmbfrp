@@ -14,6 +14,7 @@ function loadParser() {
 
   parserPromise = new Promise((resolve, reject) => {
     const script = document.createElement("script");
+
     script.src = PARSER_URL;
     script.async = true;
 
@@ -47,17 +48,23 @@ export async function getAppIcon(adb, packageName) {
   try {
     const AppInfoParser = await loadParser();
 
-    const shellResult = await adb.subprocess.shellProtocol
-      .spawnWaitText(`pm path '${packageName}'`);
+    const shellResult =
+      await adb.subprocess.shellProtocol.spawnWaitText(
+        `pm path '${packageName}'`
+      );
 
-    // อ่าน stdout จากผลลัพธ์ ADB
-    const output = typeof shellResult === "string"
-      ? shellResult
-      : shellResult?.stdout || "";
+    const output =
+      typeof shellResult === "string"
+        ? shellResult
+        : shellResult?.stdout || "";
 
-    if (shellResult?.exitCode !== undefined &&
-        shellResult.exitCode !== 0) {
-      throw new Error(shellResult.stderr || "คำสั่ง pm path ล้มเหลว");
+    if (
+      shellResult?.exitCode !== undefined &&
+      shellResult.exitCode !== 0
+    ) {
+      throw new Error(
+        shellResult.stderr || "คำสั่ง pm path ล้มเหลว"
+      );
     }
 
     const paths = String(output)
@@ -73,7 +80,6 @@ export async function getAppIcon(adb, packageName) {
     const apkPath =
       paths.find(path => path.endsWith("/base.apk")) || paths[0];
 
-    // เปิดบริการ ADB Sync
     sync = await adb.sync();
 
     const chunks = [];
@@ -82,11 +88,14 @@ export async function getAppIcon(adb, packageName) {
       chunks.push(chunk);
     }
 
-    const apkBlob = new Blob(chunks, {
-      type: "application/vnd.android.package-archive"
-    });
+    // สร้าง File พร้อมชื่อไฟล์ .apk
+    const apkFile = new File(
+      chunks,
+      `${packageName}.apk`,
+      { type: "application/vnd.android.package-archive" }
+    );
 
-    const parser = new AppInfoParser(apkBlob);
+    const parser = new AppInfoParser(apkFile);
     const result = await parser.parse();
 
     if (!result?.icon) {
@@ -96,17 +105,26 @@ export async function getAppIcon(adb, packageName) {
 
     let icon = result.icon;
 
-    if (typeof icon !== "string") return null;
+    if (typeof icon !== "string") {
+      console.warn("รูปแบบไอคอนไม่ถูกต้อง:", packageName);
+      return null;
+    }
 
     if (!icon.startsWith("data:image/")) {
       icon = `data:image/png;base64,${icon}`;
     }
 
     iconCache.set(packageName, icon);
+
     return icon;
 
   } catch (error) {
-    console.warn("ดึงไอคอนไม่สำเร็จ:", packageName, error);
+    console.warn(
+      "ดึงไอคอนไม่สำเร็จ:",
+      packageName,
+      error
+    );
+
     return null;
 
   } finally {
