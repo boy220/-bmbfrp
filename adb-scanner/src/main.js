@@ -230,6 +230,11 @@ loadThreatDatabase();
 $("uninstall").addEventListener("click",async()=>{const targets=packages.filter(p=>p.selected).map(p=>p.name);await uninstallTargets(targets,true);});
 
 // Independent browser-only report scanner: deliberately contains no ADB/WebUSB calls.
+const noAdbConnectPanel=$("noAdbConnectPanel");
+const noAdbConnectButton=$("noAdbConnectHelp");
+function toggleNoAdbConnectPanel(show){if(!noAdbConnectPanel||!noAdbConnectButton)return;const open=typeof show==="boolean"?show:noAdbConnectPanel.hidden;noAdbConnectPanel.hidden=!open;noAdbConnectButton.setAttribute("aria-expanded",String(open));noAdbConnectButton.textContent=open?"➖ ซ่อนวิธีเชื่อมต่อ":"➕ เพิ่มวิธีเชื่อมต่อ";}
+noAdbConnectButton?.addEventListener("click",()=>toggleNoAdbConnectPanel());
+$("noAdbConnectClose")?.addEventListener("click",()=>toggleNoAdbConnectPanel(false));
 let noAdbRows=[];
 function noAdbLog(message){const el=$("noAdbLog");if(el){el.textContent+=`\n[${new Date().toLocaleTimeString()}] ${message}`;el.scrollTop=el.scrollHeight;}}
 function noAdbRender(){const root=$("noAdbList");if(!root)return;const q=$("noAdbSearch").value.trim().toLowerCase();const visible=noAdbRows.filter(r=>(r.appName+" "+r.packageName+" "+r.reason).toLowerCase().includes(q));root.className="app-list";root.innerHTML="";if(!visible.length){root.className="app-list empty";root.textContent=noAdbRows.length?"ไม่พบรายการที่ค้นหา":"ยังไม่มีข้อมูลรายงาน";}for(const r of visible){const row=document.createElement("div");row.className=`noadb-row risk-${r.level}`;const cb=document.createElement("input");cb.type="checkbox";cb.checked=!!r.selected;cb.addEventListener("change",()=>{r.selected=cb.checked;noAdbUpdateButtons();});const body=document.createElement("div");body.className="noadb-app";const title=document.createElement("strong");title.textContent=r.appName||r.packageName;const detail=document.createElement("small");detail.textContent=`${r.packageName} • ${r.reason}`;body.append(title,detail);row.append(cb,body);root.append(row);}$("noAdbCount").textContent=`${noAdbRows.length} แอป • เสี่ยงสูง ${noAdbRows.filter(x=>x.level==="high").length} • ควรตรวจ ${noAdbRows.filter(x=>x.level==="medium").length}`;noAdbUpdateButtons();}
