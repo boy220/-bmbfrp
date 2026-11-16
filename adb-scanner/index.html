@@ -438,20 +438,21 @@
   </div>
   <div class="noadb-intro">
     <strong>โหมดนี้ไม่เรียก WebUSB, ไม่เปิด USB debugging และไม่ส่งคำสั่ง ADB</strong>
-    <p>เว็บเบราว์เซอร์ไม่สามารถอ่านรายชื่อแอปหรือถอนแอปในโทรศัพท์ได้โดยตรง ให้ใช้ BMB Companion APK สแกนบนโทรศัพท์ แล้วนำรายงาน JSON มาเปิดในหน้านี้</p>
-    <div class="noadb-transfer-help">
-      <strong>เชื่อมต่อโดยไม่ใช้ ADB</strong>
-      <ol>
-        <li><b>Wi-Fi:</b> สแกนใน Companion APK → บันทึก JSON → เปิดเว็บไซต์ BMB บนโทรศัพท์หรือส่งไฟล์ผ่าน Wi-Fi/Cloud ไปยังคอมพิวเตอร์ → เลือกไฟล์ JSON ด้านล่าง</li>
-        <li><b>USB:</b> เสียบสายแล้วเลือกโหมด File Transfer (MTP) → คัดลอก BMB_Companion_Report.json จากโทรศัพท์ไปคอมพิวเตอร์ → เลือกไฟล์ JSON ด้านล่าง</li>
-      </ol>
-      <small>การเชื่อมต่อรุ่นนี้เป็นการส่งรายงานแบบไฟล์ ไม่ใช่ Live Pairing; ไม่ต้องเปิด USB Debugging และไม่ส่งคำสั่ง ADB</small>
-    </div>
+    <p>เว็บเบราว์เซอร์ไม่สามารถอ่านรายชื่อแอปหรือถอนแอปในโทรศัพท์ได้โดยตรง กรุณาเลือกไฟล์รายงาน JSON ที่ส่งออกจาก Android Companion หรือเครื่องมือจัดการแอปบนโทรศัพท์</p>
   </div>
   <div class="noadb-actions">
+    <button id="noAdbConnectHelp" class="connect-help-btn" type="button" aria-expanded="false" aria-controls="noAdbConnectPanel">➕ เพิ่มวิธีเชื่อมต่อ</button>
     <label class="file-pick" for="noAdbReport">📂 เลือกไฟล์รายงานแอป (.json)</label>
     <input id="noAdbReport" type="file" accept=".json,application/json" hidden>
     <button id="noAdbSample" class="secondary" type="button">ดูรูปแบบไฟล์ตัวอย่าง</button>
+  </div>
+  <div id="noAdbConnectPanel" class="connect-panel" hidden>
+    <div class="connect-panel-head"><strong>🔗 วิธีเชื่อมต่อ BMB Companion</strong><button id="noAdbConnectClose" class="link" type="button" aria-label="ปิด">✕</button></div>
+    <div class="connect-methods">
+      <article class="connect-method"><strong>📶 Wi-Fi</strong><ol><li>เชื่อมโทรศัพท์และคอมพิวเตอร์กับเครือข่ายเดียวกัน</li><li>เปิด BMB Companion บนโทรศัพท์ แล้วกด Scan / Export Report</li><li>ส่งออกไฟล์ <code>BMB_Companion_Report.json</code></li><li>กลับมาที่เว็บไซต์ กด “เลือกไฟล์รายงานแอป” แล้วเลือกไฟล์นั้น</li></ol></article>
+      <article class="connect-method"><strong>🔌 USB (MTP)</strong><ol><li>ต่อโทรศัพท์กับคอมพิวเตอร์ด้วยสาย USB</li><li>เลือกโหมด “ถ่ายโอนไฟล์ (MTP)” บนโทรศัพท์</li><li>คัดลอกไฟล์รายงาน JSON จากโทรศัพท์ลงคอมพิวเตอร์</li><li>กลับมาที่เว็บไซต์และเลือกไฟล์ JSON</li></ol></article>
+    </div>
+    <p class="note">หมายเหตุ: Wi-Fi และ USB ในรุ่นนี้ใช้ส่งไฟล์รายงาน ไม่ใช่การเชื่อมต่อสด (Live) และไม่ใช้ ADB / USB debugging</p>
   </div>
   <div id="noAdbStatus" class="muted small">ยังไม่ได้เลือกรายงาน</div>
   <div class="toolbar noadb-summary"><h2>ผลการตรวจสอบ</h2><span id="noAdbCount" class="muted small">0 แอป</span></div>
