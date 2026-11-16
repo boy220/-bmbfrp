@@ -235,7 +235,9 @@
   </span>
 </header>
 
-<section class="panel device">
+<nav class="tab-nav" aria-label="โหมดสแกน"><button type="button" class="tab-btn active" data-tab="adb">ADB SCANNER</button><button type="button" class="tab-btn" data-tab="noadb">🛡️ SCAN ไม่เปิด ADB</button></nav>
+
+<section class="panel device" data-tab-panel="adb">
   <div>
     <div class="label">DEVICE</div>
 
@@ -257,7 +259,7 @@
   </div>
 </section>
 
-<section class="panel">
+<section class="panel" data-tab-panel="adb">
   <div class="toolbar">
     <div>
       <h2>ADB SCANNER</h2>
@@ -343,7 +345,7 @@
   </div>
 </section>
 
-<section class="panel">
+<section class="panel" data-tab-panel="adb">
 
   <div class="toolbar">
     <div>
@@ -401,7 +403,7 @@
 
 </section>
 
-<section class="panel">
+<section class="panel" data-tab-panel="adb">
   <div class="toolbar">
     <h2>ความคืบหน้า</h2>
 
@@ -426,6 +428,33 @@
 
   <pre id="log">[INFO] ADB Scanner Manager พร้อมใช้งาน</pre>
 
+</section>
+
+
+<section class="panel noadb-panel" data-tab-panel="noadb" hidden>
+  <div class="toolbar">
+    <div><h2>🛡️ BMB SCAN WITHOUT ADB</h2><div class="muted small">ตรวจรายงานแอปจาก Android โดยไม่เชื่อมต่อ ADB</div></div>
+    <span class="badge on">NO ADB</span>
+  </div>
+  <div class="noadb-intro">
+    <strong>โหมดนี้ไม่เรียก WebUSB, ไม่เปิด USB debugging และไม่ส่งคำสั่ง ADB</strong>
+    <p>เว็บเบราว์เซอร์ไม่สามารถอ่านรายชื่อแอปหรือถอนแอปในโทรศัพท์ได้โดยตรง กรุณาเลือกไฟล์รายงาน JSON ที่ส่งออกจาก Android Companion หรือเครื่องมือจัดการแอปบนโทรศัพท์</p>
+  </div>
+  <div class="noadb-actions">
+    <label class="file-pick" for="noAdbReport">📂 เลือกไฟล์รายงานแอป (.json)</label>
+    <input id="noAdbReport" type="file" accept=".json,application/json" hidden>
+    <button id="noAdbSample" class="secondary" type="button">ดูรูปแบบไฟล์ตัวอย่าง</button>
+  </div>
+  <div id="noAdbStatus" class="muted small">ยังไม่ได้เลือกรายงาน</div>
+  <div class="toolbar noadb-summary"><h2>ผลการตรวจสอบ</h2><span id="noAdbCount" class="muted small">0 แอป</span></div>
+  <input id="noAdbSearch" class="search" placeholder="ค้นหาชื่อแอปหรือ Package Name...">
+  <div id="noAdbList" class="app-list empty">นำเข้าไฟล์ JSON เพื่อเริ่มตรวจสอบ</div>
+  <div class="noadb-actions">
+    <button id="noAdbOpenSelected" class="primary" type="button" disabled>เปิดหน้าข้อมูลแอปที่เลือก</button>
+    <button id="noAdbExport" class="secondary" type="button" disabled>ส่งออกผลตรวจ JSON</button>
+  </div>
+  <p class="note">สีแดง/ส้มหมายถึงพบข้อมูลตรงฐานข้อมูลหรือสัญญาณที่ควรตรวจสอบ ไม่ใช่ข้อยืนยันว่าเป็นไวรัส การถอนติดตั้งต้องตรวจสอบและยืนยันบนโทรศัพท์ด้วยตนเอง</p>
+  <pre id="noAdbLog" class="noadb-log">[INFO] โหมด SCAN ไม่เปิด ADB พร้อมใช้งาน</pre>
 </section>
 
 <footer>
