@@ -438,7 +438,15 @@
   </div>
   <div class="noadb-intro">
     <strong>โหมดนี้ไม่เรียก WebUSB, ไม่เปิด USB debugging และไม่ส่งคำสั่ง ADB</strong>
-    <p>เว็บเบราว์เซอร์ไม่สามารถอ่านรายชื่อแอปหรือถอนแอปในโทรศัพท์ได้โดยตรง กรุณาเลือกไฟล์รายงาน JSON ที่ส่งออกจาก Android Companion หรือเครื่องมือจัดการแอปบนโทรศัพท์</p>
+    <p>เว็บเบราว์เซอร์ไม่สามารถอ่านรายชื่อแอปหรือถอนแอปในโทรศัพท์ได้โดยตรง ให้ใช้ BMB Companion APK สแกนบนโทรศัพท์ แล้วนำรายงาน JSON มาเปิดในหน้านี้</p>
+    <div class="noadb-transfer-help">
+      <strong>เชื่อมต่อโดยไม่ใช้ ADB</strong>
+      <ol>
+        <li><b>Wi-Fi:</b> สแกนใน Companion APK → บันทึก JSON → เปิดเว็บไซต์ BMB บนโทรศัพท์หรือส่งไฟล์ผ่าน Wi-Fi/Cloud ไปยังคอมพิวเตอร์ → เลือกไฟล์ JSON ด้านล่าง</li>
+        <li><b>USB:</b> เสียบสายแล้วเลือกโหมด File Transfer (MTP) → คัดลอก BMB_Companion_Report.json จากโทรศัพท์ไปคอมพิวเตอร์ → เลือกไฟล์ JSON ด้านล่าง</li>
+      </ol>
+      <small>การเชื่อมต่อรุ่นนี้เป็นการส่งรายงานแบบไฟล์ ไม่ใช่ Live Pairing; ไม่ต้องเปิด USB Debugging และไม่ส่งคำสั่ง ADB</small>
+    </div>
   </div>
   <div class="noadb-actions">
     <label class="file-pick" for="noAdbReport">📂 เลือกไฟล์รายงานแอป (.json)</label>
