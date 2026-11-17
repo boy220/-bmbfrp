@@ -135,6 +135,26 @@
       "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
     },
     {
+      "packageName": "com.flowclean.lite",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.wp.clean.sep",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake clean flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
       "packageName": "com.nox.app.security",
       "appName": "Nox App Security (ผู้ใช้เพิ่มในรายการ Third-party)",
       "category": "THIRDPARTY_USER_ADDED",
