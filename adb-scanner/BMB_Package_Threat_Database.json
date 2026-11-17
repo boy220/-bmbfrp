@@ -135,7 +135,137 @@
       "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
     },
     {
+      "packageName": "com.avast.android.cleaner",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.piriform.ccleaner",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.avg.cleaner",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.symantec.cleansweep",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.a0soft.gphone.acc.free",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "eu.thedarken.sdm",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "cleaner.clean.booster",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "myfiles.filemanager.fileexplorer.cleaner",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
       "packageName": "com.flowclean.lite",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.prakashapps.junkcleaner",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.aistudio.cleancleaner.boost",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.junkcleaner.phonebooster",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "ai.junk.clean",
+      "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
+      "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
+      "riskLevel": "HIGH_SUSPICIOUS",
+      "autoRemove": false,
+      "source": "McAfee RewaFake flowclean campaign report",
+      "sourceUrl": "https://www.mcafee.com/blogs/other-blogs/mcafee-labs/malicious-apps-google-play-store-adware-campaign/",
+      "evidence": "Financial brand impersonator reported by McAfee; verify installed app identity and version."
+    },
+    {
+      "packageName": "com.cleanmaster.mguard",
       "appName": "Zelle Online Payments (แอบอ้างตามรายงาน)",
       "category": "THIRDPARTY_FINANCIAL_IMPERSONATION",
       "riskLevel": "HIGH_SUSPICIOUS",
